@@ -15,7 +15,7 @@ This script is used to read the data in from sas format and converts it into a c
 
 The number of samples to be considered from the large sas datafile can be selected to generate smaller datasets.  
 
-Note) This process will take roughly 30 - 40 minutes to read and write all the data. SAS files take longer to read, conversion to csv saves time during code testing.
+Note) This process will take roughly 30 - 40 minutes to read and write all the data. SAS files take longer to read, hence conversion to csv saves time during code testing.
 
 ## data\_transform.py
 This will be used to extract features from the dataset and transform the values of certain columns to make the associated data easier to work with.  
@@ -38,4 +38,6 @@ Steps:
   + Add column for lifetime: Duration in days between first and last transactions
 + Get Quantile values for each user
   + 11 rows: 0% to 100% at stepsize of 10%
+
+## graphs
   

@@ -4,14 +4,17 @@ import random
 from helper import *
 from system import *
 
-data = pd.read_sas(datafolder + 'fulldata.sas7bdat')
-
+# Read from SAS style datafile
+data = pd.read_sas(datafolder + sasfile)
 print data
 
-list = random.sample(range(0,41103685), 41103685)
-#list = [range(0,41000000)]
-newdata = data.ix[list]
+# Select Sample size 
+num_samples = 41103685
+list = random.sample(range(0,41103685), num_samples)
 
+# Select sample data
+newdata = data.ix[list]
 print newdata
 
-newdata.to_csv('datrand4.csv', sep='\t')
+# Add data to CSV file (easy to work with w.r.t. SAS data files)
+newdata.to_csv(datafolder + datafile, sep='\t')

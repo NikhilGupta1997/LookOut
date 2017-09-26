@@ -185,32 +185,3 @@ def show_plots(plots):
 		fig = plt.figure(plot)
 		fig.show()
 
-#def read_input(filename):
-	
-#base = '/opt/data/pncdata/data/base/'
-
-#Read file name
-#file = base + sys.argv[1]
-#print file
-
-#Read data using pandas
-#data = pd.read_sas(file)
-
-#list = random.sample(range(0,41000000), 1000000)
-#newdata = data.ix[list]
-
-#print newdata
-
-#newdata.to_csv('datrand.csv', sep='\t')
-
-
-## Define a Set of 10 outlier accounts ##
-#Criteria is amount spent / lifetime
-#tranaction_amounts = users['TRANSACTION_AMOUNT'].sum().reset_index().set_index('ACCT_KEY')
-#user_lifetimes = users['LIFETIME'].mean().reset_index().set_index('ACCT_KEY')
-#ratio = tranaction_amounts['TRANSACTION_AMOUNT'] / user_lifetimes['LIFETIME']
-#ratio = ratio.reset_index().set_index('ACCT_KEY')
-#large_ratio = ratio.nlargest(5, 0)
-#small_ratio = ratio.nsmallest(5, 0)
-#outliers = large_ratio.index.tolist() + small_ratio.index.tolist()
-
