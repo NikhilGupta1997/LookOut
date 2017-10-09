@@ -2,10 +2,10 @@
 
 # Files and Folders
 sasfile = 'fulldata.sas7bdat' 	# SAS Data File name	
-datafile = 'datrand.csv'		# Data File name
-datafolder = 'Data/' 			# Data Folder
-filefolder = 'Files/'			# Files Folder
-plotfolder = 'Plots/'			# Plot Folder
+datafile = 'out.dblp_coauthor'		# Data File name
+datafolder = 'data/' 			# Data Folder
+filefolder = 'files/'			# Files Folder
+plotfolder = 'plots/'			# Plot Folder
 outputfile = 'outlier-plot.txt'	# Outputfile Name for outlier-plot graph
 rankfile = '_ranks.txt'			# Outpufile for individual plot outlier scores
 frequencyfile = 'freq.txt'		# Frequency file for outliers in focus
@@ -30,27 +30,25 @@ max_divide = False 				# Divide weights by max ranked weight
 quantile_divide = True			# Divide into quantiles and quantiles have differnet weights
 quantile_bins = 20 				# Number of Quantiles to divide scores
 
-# Number of Outliers
-N = 100
+# System Variables
+N = 50 # Number of Outliers
 
 # Scatter Plot Features
 identity_features = ["IDs"]
-continuous_features = ['AMOUNT', 'TRANS', 'PRCH_TRANS', 'ACCT_TRANS', 'LIFE', 'UNIQUE']
-discrete_features = ['MCC', 'STATES']
-compare_value = {'AMOUNT': 1, 'TRANS': 2, 'PRCH_TRANS': 2, 'ACCT_TRANS': 2, 'LIFE': 2, 'UNIQUE': 2, 'MCC': 4, 'STATES': 4}
-discription = { 'AMOUNT': 'Amount Spent', \
-				'TRANS': 'No. of Transactions', \
-				'PRCH_TRANS': 'No. of Purchase Transactions', \
-				'ACCT_TRANS': 'No. of Account Transactions', \
+continuous_features = ['AMOUNT', 'DEST', 'LIFE', 'IN_EDGE', 'IAT_VAR']
+discrete_features = []
+compare_value = {'AMOUNT':1, 'DEST':1, 'LIFE':1, 'IN_EDGE':1, 'IAT_VAR':1}
+discription = { 'AMOUNT': 'Total Amount of Transmission', \
+				'DEST': 'No. of Unique Destinations', \
 				'LIFE': 'Lifetime', \
-				'UNIQUE': 'Unique Stores Visited', \
-				'MCC': 'Unique MCC Codes', \
-				'STATES': 'No. of States Visited'}
+				'IAT_VAR': 'InterArrival Time Variation', \
+				'IN_EDGE': 'No. of interactions'}
 
 # Plot Marker Specifications
 colors = {0: '#33b8ff', 1: '#e67e22', 2: '#a569bd', 3: '#8aff33', 4: '#f6ff33'}
 shapes = {0: '^', 1: '.', 2: 's', 3: '*'}
 sizes = {1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8, 8: 9}
+blue_circle = 22
 
 # Terminal Colors
 RED = "\033[31m"
