@@ -6,9 +6,9 @@ import time
 """ Read the input file and construct a graph """
 def construct_graph( ):
 	f = open(filefolder + outputfile, 'r')
-	print "\t-> Reading File"
+	# print "\t-> Reading File"
 	plot_graph = Graph( )
-	print "\t-> Constructing Graph"
+	# print "\t-> Constructing Graph"
 	for line in f:	
 		values = line.strip('\n').split('\t')
 		# Create nodes and edges
@@ -20,7 +20,7 @@ def construct_graph( ):
 		plot_graph.insert_plot( new_plot ) 
 		plot_graph.insert_edge( new_edge )
 	# Create a ranked plot list which scores each plot
-	print "\t-> Constructing Plot Table"
+	# print "\t-> Constructing Plot Table"
 	plot_graph.construct_plot_table( )
 	return plot_graph
 
@@ -31,8 +31,8 @@ def best_plots( graph, Budget ):
 	while Budget > 0:
 		# Choose the next best plot which mazimizes score
 		plot = graph.get_best_plot( )
-		print "\t\t-> Choosen Plot is ", 
-		cprint(plot, OKBLUE)
+		# print "\t\t-> Choosen Plot is ",
+		# cprint(plot, OKBLUE)
 		best_plot_list.append(int( plot) )
 		# Update the graph after removing chosen plot
 		graph.update_graph( plot )
@@ -51,7 +51,7 @@ def best_greedy_norm( graph, Budget):
 def plotSpot( Budget, algo="SpellOut" ):
 	# Read the input file and construct the graph
 	plot_graph = construct_graph( )
-	print "\t-> Choosing best plots"
+	# print "\t-> Choosing best plots"
 	# Perform the PlotSPOT algorithm	
 	if algo == "SpellOut":
 		return best_plots( plot_graph, Budget )

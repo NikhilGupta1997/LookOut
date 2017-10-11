@@ -5,8 +5,8 @@ import numpy as np
 
 scores = []
 path_lengths = defaultdict(list)
-sample_size = 512
-no_trees = 1000
+sample_size = 100
+no_trees = 100
 height_limit = ceil(log(sample_size, 2))
 
 class Node():
@@ -74,7 +74,8 @@ def check_empty(X):
 	else: return False
 
 def generate_sample(features):
-	list = random.sample(range(0,len(features)), sample_size)
+	list = random.sample(range(0,len(features)), min(sample_size,
+													 len(features)))
 	return features[list, :]
 
 def get_ranges(sample):

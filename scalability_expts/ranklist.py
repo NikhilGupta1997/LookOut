@@ -69,15 +69,15 @@ def round_off(new_list):
 	return new_list
 
 def calculate_outliers(N_val, P_val):
-	print "\t-> Reading Rank List Files"
+	# print "\t-> Reading Rank List Files"
 	files = glob.glob(filefolder + '*_ranks.txt')
 	rank_lists = [scaling_function(read_file(file), P_val) for file in files]
 	plot_ids = extract_plots(files)
 	if merge_ranklists:		
-		print "\t-> Merging Rank Lists"
+		# print "\t-> Merging Rank Lists"
 		outliers = combine_lists(rank_lists)[-N_val:]
 	elif generate_iForest:
-		print "\t-> Generating iForest Outliers"
+		# print "\t-> Generating iForest Outliers"
 		outliers = forest_outliers(N_val)
 	else:
 		print_fail("Select an Outlier Choosing Algorithm")
@@ -111,7 +111,7 @@ def generate_graph(P_val, N_val):
 	except OSError:
 		pass
 	rank_lists, outliers, plot_values, plot_ids = calculate_outliers(N_val, P_val)
-	print "\t-> Standardising Outlier Weights"
+	# print "\t-> Standardising Outlier Weights"
 	for index, list in enumerate(rank_lists):
 		if algo_oddball:
 			list = standardize(list, plot_values, index)
@@ -119,5 +119,5 @@ def generate_graph(P_val, N_val):
 		delete_rows = [i for i in range(list.shape[0]) if list[i].item(0) not in outliers]
 		new_list = np.delete(list, delete_rows, axis = 0)
 		write_to_outputfile(new_list, plot_ids[index])
-	print "\t-> Generating Frequency list " + str(P_val)
+	# print "\t-> Generating Frequency list " + str(P_val)
 	generate_frequency_list(rank_lists, plot_ids, N_val)
