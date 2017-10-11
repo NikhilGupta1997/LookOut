@@ -16,10 +16,13 @@ def scatter_plot(X, Y, IDs, yname, xname, title, val):
 	global plot_num
 	plot_num = plot_num + 1
 	fig = plt.figure(plot_num)
-	fig.text(0.5, 0.04, xname, ha = 'center')
-	fig.text(0.04, 0.5, yname, va = 'center', rotation = 'vertical')
-	ax1 = fig.add_subplot(211)
+	ax1 = fig.add_subplot(111)
+	ax1.set_xlabel(xname)
+	ax1.set_ylabel(yname)
 	plt.title(title)	
+	
+	plt.ylim([min(Y)/2.0, ceil(max(Y)*2.0)])
+	plt.xlim([min(X)/2.0, ceil(max(X)*2.0)])
 	plt.loglog(X, Y, 'k.')
 
 	if algo_oddball:
@@ -49,15 +52,6 @@ def scatter_plot(X, Y, IDs, yname, xname, title, val):
 
 	# Write rank and scores to outputfile
 	write_to_file(scores, plot_num)	
-
-	# Heat Map
-	heatmap, xedges ,yedges = np.histogram2d(X, Y, bins=(np.logspace(0, ceil(log10(max(X))), 400), np.logspace(0, ceil(log10(max(Y))), 250)))
-	extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
-	ax2 = fig.add_subplot(212, sharex = ax1, sharey = ax1)
-	plt.xscale('log'); plt.yscale('log')
-	cmap = plt.cm.jet
-	cmap.set_under(color = 'white')
-	plt.imshow(heatmap.T, extent = extent, origin='lower', aspect='auto', cmap = cmap, vmin = 0.01)
 	return fig
 
 # Outlier overlay on plot
@@ -75,10 +69,26 @@ def scatter_outliers(plot, IDs):
 	line = ax.lines[0]
 	X_data = line.get_xdata()
 	Y_data = line.get_ydata()
+	xname = ax.get_xlabel()
+	yname = ax.get_ylabel()
+	title = ax.get_title()
+	global plot_num
+	plot_num = plot_num + 1
+	fig = plt.figure(plot_num)
+	ax1 = fig.add_subplot(111)
+	ax1.set_xlabel(xname)
+	ax1.set_ylabel(yname)
+	plt.title(title)
+	plt.ylim([min(Y_data)/2.0, ceil(max(Y_data)*2.0)])
+	plt.xlim([min (X_data)/2.0, ceil(max(X_data)*2.0)])
+	plt.loglog(X_data, Y_data, 'k.')
 	for outlier in outliers:
 		index = IDs.index(outlier)
-		plt.subplot(211)
-		plt.loglog(X_data[index],Y_data[index], c = colors[0], marker = shapes[1], mew = 0.1, ms = (frequencies[outlier] + 6), alpha = 0.8)
+		size = frequencies[outlier][0]
+		if plot in frequencies[outlier][1]:
+			plt.loglog(X_data[index],Y_data[index], c = outlier_color[1], marker = shapes[1], mew = 0.1, ms = size, alpha = 0.7)
+		else:
+			plt.loglog(X_data[index],Y_data[index], c = outlier_color[0], marker = shapes[1], mew = 0.1, ms = size, alpha = 0.7)
 	return fig
 
 """ CCDF Plot Functions """

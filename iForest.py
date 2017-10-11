@@ -2,10 +2,11 @@ from collections import defaultdict
 from math import log, ceil
 import random
 import numpy as np
+from system import iForest_sample
 
 scores = []
 path_lengths = defaultdict(list)
-sample_size = 256
+sample_size = iForest_sample
 no_trees = 1000
 height_limit = ceil(log(sample_size, 2))
 

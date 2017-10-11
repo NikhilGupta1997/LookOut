@@ -1,9 +1,13 @@
 import numpy as np
+import pandas as pd
 import glob
 import os
+import math
+from itertools import groupby
+from operator import itemgetter
 from iForest import forest_outliers
 from collections import Counter
-from helper import update_progress, print_ok, print_fail
+from helper import update_progress, print_ok, print_fail, scale, scaling_function
 from system import *
 
 def read_file(filename):
@@ -36,8 +40,8 @@ def combine_lists(rank_list):
 		score_list.append((user, score))
 	return [x[0] for x in sorted(score_list, key=lambda t: t[1])]
 			
-def write_to_outputfile(list, plot):
-	f = open(filefolder + outputfile, 'a')
+def write_to_output(list, plot, file):
+	f = open(filefolder + file, 'a')
 	for val in list:
 		f.write(str(int(val.item(0))) + '\t' + str(plot) + '\t' + str(val.item(1)) + '\n')
 	f.close()
@@ -63,44 +67,42 @@ def round_off(new_list):
 	new_list[:,1] = new_scores
 	return new_list
 
-def calculate_outliers(N):
-	print "\t-> Reading Rank List Files"
-	files = glob.glob(filefolder + '*_ranks.txt')
-	plot_ids = extract_plots(files)
-	rank_lists = [read_file(file) for file in files]
-	if merge_ranklists:		
-		print "\t-> Merging Rank Lists"
-		outliers = combine_lists(rank_lists)[-N:]
-	elif generate_iForest:
-		print "\t-> Generating iForest Outliers"
-		outliers = forest_outliers(N)
-	else:
-		print_fail("Select an Outlier Choosing Algorithm")
-	plot_max_values = get_max_values(rank_lists)
-	return rank_lists, outliers, plot_max_values, plot_ids
-
-def generate_frequency_list():
-	edges = read_outliers(filefolder + outputfile)
-	counts = sorted(Counter(edges).items(), reverse=True)
-	f = open(filefolder + frequencyfile, 'w')	
-	for count in counts:
-		f.write(str(int(count[0])) + '\t' + str(count[1]) + '\n')
-	f.close()
-
-def generate_graph():
+def remove_file(file):
 	try:
-		os.remove(filefolder + outputfile)
+		os.remove(filefolder + file)
 	except OSError:
 		pass
-	rank_lists, outliers, plot_values, plot_ids = calculate_outliers(N)
+
+def calculate_outliers(N_val, P_val):
+	print "\t-> Reading Rank List Files"
+	files = glob.glob(filefolder + '*_ranks.txt')
+	rank_lists = [scaling_function(read_file(file), P_val) for file in files]
+	cover_lists = [read_file(file) for file in files]
+	plot_ids = extract_plots(files)
+	if merge_ranklists:		
+		print "\t-> Merging Rank Lists"
+		outliers = combine_lists(rank_lists)[-N_val:]
+	elif generate_iForest:
+		print "\t-> Generating iForest Outliers"
+		outliers = forest_outliers(N_val)
+	else:
+		outliers = global_outlier_list
+	plot_max_values = get_max_values(rank_lists)
+	return rank_lists, cover_lists, outliers, plot_max_values, plot_ids
+
+def generate_graph(P_val, N_val):
+	remove_file(outputfile)
+	remove_file(coverfile)
+	rank_lists, cover_lists, outliers, plot_values, plot_ids = calculate_outliers(N_val, P_val)
 	print "\t-> Standardising Outlier Weights"
 	for index, list in enumerate(rank_lists):
 		if algo_oddball:
 			list = standardize(list, plot_values, index)
-		list = round_off(list)
-		list = list[:N]
 		delete_rows = [i for i in range(list.shape[0]) if list[i].item(0) not in outliers]
-		new_list = np.delete(list, delete_rows, axis = 0)
-		write_to_outputfile(new_list, plot_ids[index])
-	print "\t-> Generating Frequency list"
-	generate_frequency_list()
+		new_list = round_off(np.delete(list, delete_rows, axis = 0))
+		write_to_output(new_list, plot_ids[index], outputfile)
+	for index, list in enumerate(cover_lists):
+		delete_rows = [i for i in range(list.shape[0]) if list[i].item(0) not in outliers]
+		new_list = round_off(np.delete(list, delete_rows, axis = 0))
+		write_to_output(new_list, plot_ids[index], coverfile)
+	print "\t-> Generating Frequency list " + str(P_val)

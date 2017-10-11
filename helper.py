@@ -2,7 +2,8 @@ import sys
 import numpy as np
 import pandas.core.algorithms as algos
 import oddball
-from math import sqrt, log, isnan
+from scipy.interpolate import interp1d
+from math import sqrt, log, isnan, pow
 from collections import Counter
 from system import *
 
@@ -32,6 +33,16 @@ def fix_zero_error(X):
 def quantile(x):
 	vals = x.values
 	return algos.quantile(vals, np.linspace(0,1,11))
+
+# Returns mean of a group
+def mean(x):
+	vals = x.values
+	return np.sum(vals[:-1]) / vals[:-1].size
+
+# Returns variance of a group
+def variance(x):
+	vals = x.values
+	return np.var(vals[:-1])
 
 # Calculates the log variance error of a line w.r.t. its band plot
 def logvar(X, mid, low, high):
@@ -154,15 +165,15 @@ def get_outlier_frequencies():
 	frequency = {}
 	for row in open(filefolder + frequencyfile):
 		values = row.strip('\n').split('\t')
-		key = int(str(values[0])); value = int(values[1])
-		frequency[key] = value
+		key = int(str(values[0])); size = int(values[1]); plot = [int(value) for value in values[2].split(' ')]
+		frequency[key] = [size, plot]
 	return frequency
 
 def generate_pairs(list1, list2):
 	pairs = []
-	for x in list1:
-		for y in list2:
-			if x != y:
+	for i, x in enumerate(list1):
+		for j, y in enumerate(list2):
+			if x != y and j >= i:
 				pairs.append((x, y))
 	return pairs
 
@@ -170,5 +181,99 @@ def combine_features(features):
 	arr = np.asarray(features, dtype = float)
 	arr[1:, :] = np.log(arr[1:, :])
 	return arr.transpose()
-		
+
+def parse_cmdline():
+    from optparse import OptionParser
+    parser = OptionParser()
+    parser.add_option("--p_val", dest="p_val",
+                      default = -0.8,
+                      help="outlier scoring parameter")
+
+    parser.add_option("--budget", dest="budget",
+                      default = 5,
+                      help = "budget of plots")
+    (options, args) = parser.parse_args()
+    return float(options.p_val), int(options.budget)
+
+def scale(x, P_val):
+	return pow(float(1 + P_val*x), float(1 / P_val))
+
+def scaling_function(rank_list, P_val):
+	scores = rank_list[:,1]
+	new_scores = np.matrix([float("{0:.2f}".format(scale(score, P_val))) for score in scores]).transpose()
+	rank_list[:,1] = new_scores
+	return rank_list
+
+def get_coverage(plots, N_val):
+	obs_values = {}
+	scores = np.matrix([map(float, line.strip('\n').split('\t')) for line in open(filefolder + coverfile, 'r')])
+	for row in scores:
+		outlier = int(row.item(0))
+		plot = int(row.item(1))
+		score = row.item(2)
+		if outlier not in obs_values:
+			obs_values[outlier] = 0.0
+			if plot in plots:
+				obs_values[outlier] = score
+		else:
+			if score > obs_values[outlier] and plot in plots:
+				obs_values[outlier] = score
+	total_coverage = 0.0
+	for outlier in obs_values.keys():
+		total_coverage += obs_values[outlier]
+	return float(total_coverage) / N_val
+
+# def get_coverage(plots, N_val):
+# 	max_values = {}
+# 	obs_values = {}
+# 	scores = np.matrix([map(float, line.strip('\n').split('\t')) for line in open(filefolder + coverfile, 'r')])
+# 	for row in scores:
+# 		outlier = int(row.item(0))
+# 		plot = int(row.item(1))
+# 		score = row.item(2)
+# 		if outlier not in max_values:
+# 			max_values[outlier] = score
+# 			obs_values[outlier] = 0.0
+# 			if plot in plots:
+# 				obs_values[outlier] = score
+# 		else:
+# 			if score > max_values[outlier]:
+# 				max_values[outlier] = score
+# 			if score > obs_values[outlier] and plot in plots:
+# 				obs_values[outlier] = score
+# 	max_coverage = 0.0
+# 	total_coverage = 0.0
+# 	for outlier in max_values.keys():
+# 		max_coverage += max_values[outlier]
+# 		total_coverage += obs_values[outlier]
+# 	return float(total_coverage) / max_coverage
+
+def generate_frequency_list(plots):
+	outlier_max_plot = {}
+	f = open(filefolder + frequencyfile, 'w')	
+	scores = np.matrix([map(float, line.strip('\n').split('\t')) for line in open(filefolder + outputfile, 'r')])
+	for row in scores:
+		outlier = int(row.item(0))
+		plot = int(row.item(1))
+		score = row.item(2)
+		if outlier not in outlier_max_plot:
+			outlier_max_plot[outlier] = [-1, 0.0, -1]
+		outlier_max_plot[outlier][1] += score
+		if plot in plots:
+			if score > outlier_max_plot[outlier][2]:
+				outlier_max_plot[outlier][0] = plot
+				outlier_max_plot[outlier][2] = score
+	min_val = float("inf")
+	max_val = 0
+	for outlier in outlier_max_plot.keys():
+		score = outlier_max_plot[outlier][1]
+		if score < min_val:
+			min_val = score
+		if score > max_val:
+			max_val = score
+	for outlier in outlier_max_plot.keys():
+		m = interp1d([min_val,max_val],[blue_circle/3, blue_circle])
+		size = m(outlier_max_plot[outlier][1])
+		f.write(str(int(outlier)) + '\t' + str(int(size)) + '\t' + str(int(outlier_max_plot[outlier][0])) + '\n')
+	f.close()
 

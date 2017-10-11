@@ -44,6 +44,10 @@ class Edge:
 		else:
 			return False
 
+	def update_max_weight(self, max_weight):
+		self.weight = max_weight
+		self.max_weight = max_weight
+
 class Plot:
 
 	def __init__(self, id):
@@ -163,4 +167,24 @@ class Graph:
 			if not self.outliers[key].isChosen( ):
 				return False
 		return True
+
+	# Ranks the plots initially for greedy selection
+	def get_plot_ranks( self ):
+		ranks = []
+		for plot_id in self.plots.keys( ):
+			score = self.calculate_plot_score( plot_id )
+			ranks.append((plot_id, score))
+		return [int(plot) for plot, score in sorted(ranks, key=lambda x:x[1], reverse=True)]
+
+	# Sets the sum of edges of an outlier to 1
+	def normalize_edges( self ):
+		for outlier in self.outliers.keys( ):
+			sum = 0
+			plot_list = self.get_plots_list(outlier)
+			for plot_id in plot_list:
+				edge = self.get_edge(outlier, plot_id)
+				sum += edge.max_weight
+			for plot_id in plot_list:
+				edge = self.get_edge(outlier, plot_id)
+				edge.update_max_weight(float(edge.max_weight / sum))
 
