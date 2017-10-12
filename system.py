@@ -2,7 +2,7 @@
 
 # Files and Folders
 sasfile = 'fulldata.sas7bdat' 	# SAS Data File name	
-datafile = 'data_port.csv'		# Data File name
+datafile = 'enron.csv'		# Data File name
 datafolder = 'Data/' 			# Data Folder
 filefolder = 'Files/'			# Files Folder
 plotfolder = 'Plots/'			# Plot Folder
@@ -12,7 +12,7 @@ rankfile = '_ranks.txt'			# Outpufile for individual plot outlier scores
 frequencyfile = 'freq.txt'		# Frequency file for outliers in focus
 logfile = 'log.txt'				# Log File Name
 
-data_delimiter = '\t'			# Define delimiter for csv datafile
+data_delimiter = ','			# Define delimiter for csv datafile
 
 # Which Plot Types to Generate
 scatter_show = True 			# Generate Scatter Plots
@@ -36,11 +36,11 @@ quantile_divide = True			# Divide into quantiles and quantiles have differnet we
 quantile_bins = 20 				# Number of Quantiles to divide scores
 
 # System Variables
-N_list = [10, 20, 30, 40] 					# List of Number of Outliers
-Budget = [1,2,3,4,5,6]			
-	# List to define budgets
-iForest_sample = 512			# iForest Tree Sample Size
-P_val = -0.8					# Scaling factor
+N_list = [10, 20, 30, 40] 		# List of Number of Outliers
+Budget = [1,2,3,4,5,6]			# List to define budgets
+iForest_sample = 64				# iForest Tree Sample Size
+P_val = 1						# Scaling factor
+output_plots = True				# Choose to show plots
 
 # Baselines
 baseline =	True 				# Use baseline selection or not

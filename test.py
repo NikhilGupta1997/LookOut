@@ -25,6 +25,7 @@ destinations = data.groupby('DESTINATION')
 print_ok("Plot Helpers Generated")
 
 """ Scatter Plots """
+rank_matrix = []
 scatter_plots = 0 # Count of the number of scatter plots generated
 if scatter_show:
 	cprint ("Generating Scatter Plots")
@@ -43,8 +44,10 @@ if scatter_show:
 		# Generate Plot
 		Y = features[0]
 		X = features[1]
-		fig = scatter_plot(eval(X), eval(Y), IDs, discription[Y], discription[X], discription[Y] + ' vs ' + discription[X], compare_value[X])
-		pp.savefig(fig)
+		fig, rank_list = scatter_plot(eval(X), eval(Y), IDs, discription[Y], discription[X], discription[Y] + ' vs ' + discription[X], compare_value[X])
+		rank_matrix.append(rank_list)
+		if output_plots:
+			pp.savefig(fig)
 		update_progress(i+1, len(feature_pairs))
 	pp.close()
 	scatter_plots = len(feature_pairs)
@@ -68,11 +71,11 @@ count = 0
 for N_val in N_list:
 	# Create graph between outliers and plots
 	cprint("Generating Graph File")
-	ranklist.generate_graph(P_val, N_val)
+	scaled_matrix, normal_matrix = ranklist.generate_graph(P_val, N_val, rank_matrix)
 	print_ok("Graph File Generated")
 	# Run plotSpot to get selected graphs
 	for B in Budget:
-		for algo in ["SpellOut", "TopK", "Random"]:
+		for algo in ["SpellOut", "TopK"]:
 			if algo != "SpellOut"  and not baseline:
 				continue
 			
@@ -82,13 +85,13 @@ for N_val in N_list:
 			
 			start_time = time.time()
 			cprint ("Running PlotSpot Algorithm")
-			plots = plotSpot(B, algo)
-			generate_frequency_list(plots)
+			plots = plotSpot(B, scaled_matrix, algo)
+			frequencies = generate_frequency_list(plots, scaled_matrix)
 			print_ok("PlotSpot Complete")
 			elapsed_time = time.time() - start_time
 
 			cprint("Saving Plots")
-			coverage = get_coverage(plots, N_val)
+			coverage = get_coverage(plots, N_val, normal_matrix)
 			print "\t-> Total Plots Generated = ",
 			cprint(scatter_plots, OKBLUE)
 			print "\t-> Total Plots Chosen = ",
@@ -96,13 +99,14 @@ for N_val in N_list:
 			print "\t-> Coverage = ",
 			cprint("{0:.2f} %".format(coverage*100), OKBLUE)
 
-			# Save selected plots in pdf
-			pp = PdfPages(plotfolder + 'selectedplots_' + str(N_val) + "_" + str(B) + "_" + algo + '.pdf')
-			for plot in plots:
-				fig = scatter_outliers(plot, IDs)
-				pp.savefig(fig)
-			pp.close()
-			print_ok("Plots Saved")
+			if output_plots:
+				# Save selected plots in pdf
+				pp = PdfPages(plotfolder + 'selectedplots_' + str(N_val) + "_" + str(B) + "_" + algo + '.pdf')
+				for plot in plots:
+					fig = scatter_outliers(plot, IDs, frequencies)
+					pp.savefig(fig)
+				pp.close()
+				print_ok("Plots Saved")
 			
 			file.write("N_val " + str(N_val) + "\tBudget " + str(B) + "\tAlgo " + algo + "\tTime Taken = " + str(elapsed_time) + "\tCoverage = "+ str(coverage) + "%" + "\n")
 file.close()

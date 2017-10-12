@@ -40,11 +40,8 @@ def combine_lists(rank_list):
 		score_list.append((user, score))
 	return [x[0] for x in sorted(score_list, key=lambda t: t[1])]
 			
-def write_to_output(list, plot, file):
-	f = open(filefolder + file, 'a')
-	for val in list:
-		f.write(str(int(val.item(0))) + '\t' + str(plot) + '\t' + str(val.item(1)) + '\n')
-	f.close()
+def write_to_output(list, plot):
+	return [[int(val.item(0)), plot, val.item(1)] for val in list]
 
 def quantile_cut(scores, max_score):
 	score_list = [score.tolist()[0][0] for score in scores]
@@ -73,12 +70,11 @@ def remove_file(file):
 	except OSError:
 		pass
 
-def calculate_outliers(N_val, P_val):
+def calculate_outliers(N_val, P_val, rank_matrix):
 	print "\t-> Reading Rank List Files"
-	files = glob.glob(filefolder + '*_ranks.txt')
-	rank_lists = [scaling_function(read_file(file), P_val) for file in files]
-	cover_lists = [read_file(file) for file in files]
-	plot_ids = extract_plots(files)
+	rank_lists = [scaling_function(list, P_val) for list in rank_matrix]
+	cover_lists = [np.matrix(list) for list in rank_matrix]
+	plot_ids = range(1, len(rank_lists) + 1)
 	if merge_ranklists:		
 		print "\t-> Merging Rank Lists"
 		outliers = combine_lists(rank_lists)[-N_val:]
@@ -87,22 +83,20 @@ def calculate_outliers(N_val, P_val):
 		outliers = forest_outliers(N_val)
 	else:
 		outliers = global_outlier_list
-	plot_max_values = get_max_values(rank_lists)
-	return rank_lists, cover_lists, outliers, plot_max_values, plot_ids
+	return rank_lists, cover_lists, outliers, plot_ids
 
-def generate_graph(P_val, N_val):
+def generate_graph(P_val, N_val, rank_matrix):
 	remove_file(outputfile)
 	remove_file(coverfile)
-	rank_lists, cover_lists, outliers, plot_values, plot_ids = calculate_outliers(N_val, P_val)
+	rank_lists, cover_lists, outliers, plot_ids = calculate_outliers(N_val, P_val, rank_matrix)
 	print "\t-> Standardising Outlier Weights"
+	scaled_matrix, normal_matrix = [], []
 	for index, list in enumerate(rank_lists):
-		if algo_oddball:
-			list = standardize(list, plot_values, index)
 		delete_rows = [i for i in range(list.shape[0]) if list[i].item(0) not in outliers]
 		new_list = round_off(np.delete(list, delete_rows, axis = 0))
-		write_to_output(new_list, plot_ids[index], outputfile)
+		scaled_matrix.append(write_to_output(new_list, plot_ids[index]))
 	for index, list in enumerate(cover_lists):
 		delete_rows = [i for i in range(list.shape[0]) if list[i].item(0) not in outliers]
 		new_list = round_off(np.delete(list, delete_rows, axis = 0))
-		write_to_output(new_list, plot_ids[index], coverfile)
-	print "\t-> Generating Frequency list " + str(P_val)
+		normal_matrix.append(write_to_output(new_list, plot_ids[index]))
+	return scaled_matrix, normal_matrix

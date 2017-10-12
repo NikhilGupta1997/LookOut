@@ -4,21 +4,20 @@ from helper import cprint
 import random
 
 """ Read the input file and construct a graph """
-def construct_graph( ):
-	f = open(filefolder + outputfile, 'r')
+def construct_graph(scaled_matrix):
 	print "\t-> Reading File"
 	plot_graph = Graph( )
 	print "\t-> Constructing Graph"
-	for line in f:	
-		values = line.strip('\n').split('\t')
-		# Create nodes and edges
-		new_outlier = Outlier( values[0] )
-		new_plot = Plot( values[1] )
-		new_edge = Edge( values[0], values[1], values[2] )
-		# Insert into Graph
-		plot_graph.insert_outlier( new_outlier )
-		plot_graph.insert_plot( new_plot ) 
-		plot_graph.insert_edge( new_edge )
+	for list in scaled_matrix:	
+		for values in list:
+			# Create nodes and edges
+			new_outlier = Outlier( values[0] )
+			new_plot = Plot( values[1] )
+			new_edge = Edge( values[0], values[1], values[2] )
+			# Insert into Graph
+			plot_graph.insert_outlier( new_outlier )
+			plot_graph.insert_plot( new_plot ) 
+			plot_graph.insert_edge( new_edge )
 	# Create a ranked plot list which scores each plot
 	print "\t-> Constructing Plot Table"
 	plot_graph.construct_plot_table( )
@@ -49,9 +48,9 @@ def random_plots( graph, Budget ):		# Baseline 2
 	return random.sample(plots, Budget)
 
 
-def plotSpot( Budget, algo="SpellOut" ):
+def plotSpot( Budget, scaled_matrix, algo="SpellOut"):
 	# Read the input file and construct the graph
-	plot_graph = construct_graph( )
+	plot_graph = construct_graph(scaled_matrix)
 	print "\t-> Choosing best plots"
 	# Perform the PlotSPOT algorithm	
 	if algo == "SpellOut":

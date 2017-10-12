@@ -50,9 +50,8 @@ def scatter_plot(X, Y, IDs, yname, xname, title, val):
 	else:
 		print_fail("Scoring Algorithm not Chosen")
 
-	# Write rank and scores to outputfile
-	write_to_file(scores, plot_num)	
-	return fig
+	# Write rank and scores to outputfile	
+	return fig, scores
 
 # Outlier overlay on plot
 def scatter_overlay(X, Y):
@@ -61,9 +60,7 @@ def scatter_overlay(X, Y):
 		plt.loglog(X[i],Y[i], c = colors[i%5], marker = shapes[i/5], mew = 0.0, ms = 10)
 
 # Find Outliers and frquency for plot
-def scatter_outliers(plot, IDs):
-	outliers = get_plot_outliers(plot)
-	frequencies = get_outlier_frequencies()
+def scatter_outliers(plot, IDs, frequencies):
 	fig = plt.figure(plot)
 	ax = fig.axes[0]
 	line = ax.lines[0]
@@ -82,10 +79,10 @@ def scatter_outliers(plot, IDs):
 	plt.ylim([min(Y_data)/2.0, ceil(max(Y_data)*2.0)])
 	plt.xlim([min (X_data)/2.0, ceil(max(X_data)*2.0)])
 	plt.loglog(X_data, Y_data, 'k.')
-	for outlier in outliers:
+	for outlier in frequencies.keys():
 		index = IDs.index(outlier)
 		size = frequencies[outlier][0]
-		if plot in frequencies[outlier][1]:
+		if plot == frequencies[outlier][1]:
 			plt.loglog(X_data[index],Y_data[index], c = outlier_color[1], marker = shapes[1], mew = 0.1, ms = size, alpha = 0.7)
 		else:
 			plt.loglog(X_data[index],Y_data[index], c = outlier_color[0], marker = shapes[1], mew = 0.1, ms = size, alpha = 0.7)

@@ -55,13 +55,6 @@ def logvar(X, mid, low, high):
 			var += log(max(abs(val - mid[i]),1))	
 	return var
 
-# Write to plot_outlier output file
-def write_to_file(ranks, plot_num):
-	f = open(filefolder + str(plot_num) + rankfile, 'w')	
-	for rank, score in enumerate(ranks):
-		f.write(str(score[0]) + '\t' + str(score[1]) + '\n') 
-	f.close()
-
 # Map the MCC indexes between two lists
 def get_MCC_indexes(X1, X2):
 	intersect = list(set(X1) & set(X2))
@@ -153,22 +146,6 @@ def get_total_plots(A, B, C, D, E):
 		total += E
 	return total
 
-def get_plot_outliers(plot):
-	outliers = []
-	for row in open(filefolder + outputfile):
-		value = row.strip('\n').split('\t')
-		if int(value[1]) == plot:
-			outliers.append(int(value[0]))
-	return outliers
-
-def get_outlier_frequencies():
-	frequency = {}
-	for row in open(filefolder + frequencyfile):
-		values = row.strip('\n').split('\t')
-		key = int(str(values[0])); size = int(values[1]); plot = [int(value) for value in values[2].split(' ')]
-		frequency[key] = [size, plot]
-	return frequency
-
 def generate_pairs(list1, list2):
 	pairs = []
 	for i, x in enumerate(list1):
@@ -199,70 +176,45 @@ def scale(x, P_val):
 	return pow(float(1 + P_val*x), float(1 / P_val))
 
 def scaling_function(rank_list, P_val):
-	scores = rank_list[:,1]
-	new_scores = np.matrix([float("{0:.2f}".format(scale(score, P_val))) for score in scores]).transpose()
-	rank_list[:,1] = new_scores
-	return rank_list
+	scores = [score[1] for score in rank_list]
+	new_scores = [float("{0:.2f}".format(scale(score, P_val))) for score in scores]
+	return np.matrix([[rank_list[i][0], new_scores[i]] for i in range(len(rank_list))])
+	return new_scores
 
-def get_coverage(plots, N_val):
+def get_coverage(plots, N_val, normal_matrix):
 	obs_values = {}
-	scores = np.matrix([map(float, line.strip('\n').split('\t')) for line in open(filefolder + coverfile, 'r')])
-	for row in scores:
-		outlier = int(row.item(0))
-		plot = int(row.item(1))
-		score = row.item(2)
-		if outlier not in obs_values:
-			obs_values[outlier] = 0.0
-			if plot in plots:
-				obs_values[outlier] = score
-		else:
-			if score > obs_values[outlier] and plot in plots:
-				obs_values[outlier] = score
+	for row in normal_matrix:
+		for value in row:
+			outlier = int(value[0])
+			plot = int(value[1])
+			score = value[2]
+			if outlier not in obs_values:
+				obs_values[outlier] = 0.0
+				if plot in plots:
+					obs_values[outlier] = score
+			else:
+				if score > obs_values[outlier] and plot in plots:
+					obs_values[outlier] = score
 	total_coverage = 0.0
 	for outlier in obs_values.keys():
 		total_coverage += obs_values[outlier]
 	return float(total_coverage) / N_val
 
-# def get_coverage(plots, N_val):
-# 	max_values = {}
-# 	obs_values = {}
-# 	scores = np.matrix([map(float, line.strip('\n').split('\t')) for line in open(filefolder + coverfile, 'r')])
-# 	for row in scores:
-# 		outlier = int(row.item(0))
-# 		plot = int(row.item(1))
-# 		score = row.item(2)
-# 		if outlier not in max_values:
-# 			max_values[outlier] = score
-# 			obs_values[outlier] = 0.0
-# 			if plot in plots:
-# 				obs_values[outlier] = score
-# 		else:
-# 			if score > max_values[outlier]:
-# 				max_values[outlier] = score
-# 			if score > obs_values[outlier] and plot in plots:
-# 				obs_values[outlier] = score
-# 	max_coverage = 0.0
-# 	total_coverage = 0.0
-# 	for outlier in max_values.keys():
-# 		max_coverage += max_values[outlier]
-# 		total_coverage += obs_values[outlier]
-# 	return float(total_coverage) / max_coverage
-
-def generate_frequency_list(plots):
+def generate_frequency_list(plots, scaled_matrix):
 	outlier_max_plot = {}
-	f = open(filefolder + frequencyfile, 'w')	
-	scores = np.matrix([map(float, line.strip('\n').split('\t')) for line in open(filefolder + outputfile, 'r')])
-	for row in scores:
-		outlier = int(row.item(0))
-		plot = int(row.item(1))
-		score = row.item(2)
-		if outlier not in outlier_max_plot:
-			outlier_max_plot[outlier] = [-1, 0.0, -1]
-		outlier_max_plot[outlier][1] += score
-		if plot in plots:
-			if score > outlier_max_plot[outlier][2]:
-				outlier_max_plot[outlier][0] = plot
-				outlier_max_plot[outlier][2] = score
+	for row in scaled_matrix:
+		for value in row:
+			outlier = int(value[0])
+			plot = int(value[
+				1])
+			score = value[2]
+			if outlier not in outlier_max_plot:
+				outlier_max_plot[outlier] = [-1, 0.0, -1]
+			outlier_max_plot[outlier][1] += score
+			if plot in plots:
+				if score > outlier_max_plot[outlier][2]:
+					outlier_max_plot[outlier][0] = plot
+					outlier_max_plot[outlier][2] = score
 	min_val = float("inf")
 	max_val = 0
 	for outlier in outlier_max_plot.keys():
@@ -271,9 +223,10 @@ def generate_frequency_list(plots):
 			min_val = score
 		if score > max_val:
 			max_val = score
+	frequencies = {}
 	for outlier in outlier_max_plot.keys():
 		m = interp1d([min_val,max_val],[blue_circle/3, blue_circle])
 		size = m(outlier_max_plot[outlier][1])
-		f.write(str(int(outlier)) + '\t' + str(int(size)) + '\t' + str(int(outlier_max_plot[outlier][0])) + '\n')
-	f.close()
+		frequencies[outlier] = [int(size), int(outlier_max_plot[outlier][0])]
+	return frequencies
 
