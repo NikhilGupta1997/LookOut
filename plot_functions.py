@@ -10,6 +10,14 @@ from helper import *
 
 plot_num = 0
 
+SIZES = {
+'title': 36,
+'label': 36,
+'tick': 28,
+'annotation': 30,
+'flag': 400
+}
+
 """ Scatter Plot Functions """
 def scatter_plot(X, Y, IDs, yname, xname, title, val):
 	# Main Plot	
@@ -17,12 +25,15 @@ def scatter_plot(X, Y, IDs, yname, xname, title, val):
 	plot_num = plot_num + 1
 	fig = plt.figure(plot_num)
 	ax1 = fig.add_subplot(111)
-	ax1.set_xlabel(xname)
-	ax1.set_ylabel(yname)
-	plt.title(title)	
+	ax1.set_xlabel(xname, fontsize=SIZES['label'])
+	ax1.set_ylabel(yname, fontsize=SIZES['label'])
+	ax1.xaxis.set_tick_params(labelsize=SIZES['tick'])
+	ax1.yaxis.set_tick_params(labelsize=SIZES['tick'])
+	# plt.title(title)	
 	
 	plt.ylim([min(Y)/2.0, ceil(max(Y)*2.0)])
 	plt.xlim([min(X)/2.0, ceil(max(X)*2.0)])
+	plt.gcf().subplots_adjust(bottom=0.18, left=0.18)
 	plt.loglog(X, Y, 'k.')
 
 	if algo_oddball:
@@ -73,19 +84,22 @@ def scatter_outliers(plot, IDs, frequencies):
 	plot_num = plot_num + 1
 	fig = plt.figure(plot_num)
 	ax1 = fig.add_subplot(111)
-	ax1.set_xlabel(xname)
-	ax1.set_ylabel(yname)
-	plt.title(title)
+	ax1.set_xlabel(xname, fontsize=SIZES['label'])
+	ax1.set_ylabel(yname, fontsize=SIZES['label'])
+	ax1.xaxis.set_tick_params(labelsize=SIZES['tick'])
+	ax1.yaxis.set_tick_params(labelsize=SIZES['tick'])
+	# plt.title(title)
 	plt.ylim([min(Y_data)/2.0, ceil(max(Y_data)*2.0)])
 	plt.xlim([min (X_data)/2.0, ceil(max(X_data)*2.0)])
+	plt.gcf().subplots_adjust(bottom=0.18, left=0.18)
 	plt.loglog(X_data, Y_data, 'k.')
 	for outlier in frequencies.keys():
 		index = IDs.index(outlier)
 		size = frequencies[outlier][0]
 		if plot == frequencies[outlier][1]:
-			plt.loglog(X_data[index],Y_data[index], c = outlier_color[1], marker = shapes[1], mew = 0.1, ms = size, alpha = 0.7)
+			plt.loglog(X_data[index],Y_data[index], c = outlier_color[1], marker = shapes[1], mew = 0.1, ms = size, alpha = 0.75)
 		else:
-			plt.loglog(X_data[index],Y_data[index], c = outlier_color[0], marker = shapes[1], mew = 0.1, ms = size, alpha = 0.7)
+			plt.loglog(X_data[index],Y_data[index], c = outlier_color[0], marker = shapes[1], mew = 0.1, ms = size, alpha = 0.75)
 	return fig
 
 """ CCDF Plot Functions """

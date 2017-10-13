@@ -182,23 +182,29 @@ def scaling_function(rank_list, P_val):
 	return new_scores
 
 def get_coverage(plots, N_val, normal_matrix):
+	max_values = {}
 	obs_values = {}
 	for row in normal_matrix:
 		for value in row:
 			outlier = int(value[0])
 			plot = int(value[1])
 			score = value[2]
-			if outlier not in obs_values:
+			if outlier not in max_values:
+				max_values[outlier] = score
 				obs_values[outlier] = 0.0
 				if plot in plots:
 					obs_values[outlier] = score
 			else:
+				if score > max_values[outlier]:
+					max_values[outlier] = score
 				if score > obs_values[outlier] and plot in plots:
 					obs_values[outlier] = score
+	max_coverage = 0.0
 	total_coverage = 0.0
-	for outlier in obs_values.keys():
+	for outlier in max_values.keys():
+		max_coverage += max_values[outlier]
 		total_coverage += obs_values[outlier]
-	return float(total_coverage) / N_val
+	return float(total_coverage) / N_val, float(max_coverage) / N_val
 
 def generate_frequency_list(plots, scaled_matrix):
 	outlier_max_plot = {}

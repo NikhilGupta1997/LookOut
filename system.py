@@ -27,8 +27,8 @@ algo_iForests = True			# Depth based scoring algo
 
 # Which Outlier Choosing Algorithm to use
 merge_ranklists = False					# Merge ranks of each outlier
-generate_iForest = True					# Use iForests on all features
-global_outlier_list = [127, 128, 129] 	# Used if both algorithms set to false
+generate_iForest = False					# Use iForests on all features
+global_outlier_list = [127, 129] 			# Used if both algorithms set to false
 
 # Which Standardization Algorithm to use
 max_divide = False 				# Divide weights by max ranked weight
@@ -38,23 +38,24 @@ quantile_bins = 20 				# Number of Quantiles to divide scores
 # System Variables
 N_list = [10, 20, 30, 40] 		# List of Number of Outliers
 Budget = [1,2,3,4,5,6]			# List to define budgets
-iForest_sample = 64				# iForest Tree Sample Size
+iForest_sample = 64			# iForest Tree Sample Size
 P_val = 1						# Scaling factor
-output_plots = True				# Choose to show plots
+output_plots = True 			# Choose to show plots
 
 # Baselines
-baseline =	True 				# Use baseline selection or not
+baseline =	False 				# Use baseline selection or not
 
 # Scatter Plot Features
 identity_features = ["IDs"]
-continuous_features = ['AMOUNT', 'DEST', 'LIFE', 'IN_EDGE', 'IAT_VAR']
+continuous_features = ['AMOUNT', 'DEST', 'LIFE', 'IN_EDGE', 'IAT_VAR', 'MEAN_IAT']
 discrete_features = []
-compare_value = {'AMOUNT':1, 'DEST':1, 'LIFE':1, 'IN_EDGE':1, 'IAT_VAR':1}
-discription = { 'AMOUNT': 'Total Amount of Transmission', \
-				'DEST': 'No. of Unique Destinations', \
+compare_value = {'AMOUNT':1, 'DEST':1, 'LIFE':1, 'IN_EDGE':1, 'IAT_VAR':1, 'MEAN_IAT':1}
+discription = { 'AMOUNT': 'Total Amount', \
+				'DEST': 'Unique Destinations', \
 				'LIFE': 'Lifetime', \
-				'IAT_VAR': 'InterArrival Time Variation', \
-				'IN_EDGE': 'No. of interactions'}
+				'IAT_VAR': 'IAT Variation', \
+				'MEAN_IAT': 'Average IAT', \
+				'IN_EDGE': '# of interactions'}
 
 # Plot Marker Specifications
 colors = {0: '#33b8ff', 1: '#e67e22', 2: '#a569bd', 3: '#8aff33', 4: '#f6ff33'}
