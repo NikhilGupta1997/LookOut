@@ -29,14 +29,19 @@ scatter_plots = 0 # Count of the number of scatter plots generated
 if scatter_show:
 	cprint ("Generating Scatter Plots")
 	enable_warnings()
-	['AMOUNT', 'DEST', 'LIFE', 'IN_EDGE', 'AMT_VAR', 'IAT_VAR', 'MEAN_IAT']
-	AMOUNT = fix_zero_error(users['WEIGHT'].sum().values.tolist())
+	['SRC', 'DEST', 'EDGES_IN', 'EDGES_OUT', 'LIFE', 'MEDIAN_IAT', 'MEAN_IAT', 'IAT_VAR_MEAN']
+	SRC = fix_zero_error(destinations['SOURCE'].nunique().values.tolist())
 	DEST = fix_zero_error(users['DESTINATION'].nunique().values.tolist())
 	LIFE = fix_zero_error(users['LIFETIME'].first().values.tolist())
-	IN_EDGE = fix_zero_error(users['WEIGHT'].count().values.tolist())
-	IAT_VAR = fix_zero_error(users['IAT_VAR'].first().values.tolist())
+	EDGES_IN = fix_zero_error(destinations['WEIGHT'].count().values.tolist())
+	EDGES_OUT = fix_zero_error(users['WEIGHT'].count().values.tolist())
+	IAT_VAR_MEAN = fix_zero_error(users['IAT_VAR_MEAN'].first().values.tolist())
 	MEAN_IAT = fix_zero_error(users['MEAN_IAT'].first().values.tolist())
-	IDs = [key for key, val in users['IAT_VAR']]
+	MEDIAN_IAT = fix_zero_error(users['MEDIAN_IAT'].first().values.tolist())
+	IDs = [key for key, val in users['IAT_VAR_MEAN']]
+	DEST_IDs = [key for key, val in destinations['SOURCE']]
+	SRC = realign(SRC, IDs, DEST_IDs)
+	EDGES_IN = realign(EDGES_IN, IDs, DEST_IDs)
 
 	feature_pairs = generate_pairs(continuous_features, continuous_features + discrete_features)
 
@@ -105,9 +110,11 @@ for N_val in N_list:
 			if output_plots:
 				# Save selected plots in pdf
 				pp = PdfPages(plotfolder + 'selectedplots_' + str(N_val) + "_" + str(B) + "_" + algo + '.pdf')
-				for plot in plots:
+				for i, plot in enumerate(plots):
 					fig = scatter_outliers(plot, IDs, frequencies)
-					pp.savefig(fig)
+					fname = 'discoveries/LBNL-{0}-{1}-{2}.png'.format(N_val, B, i)
+					fig.savefig(fname)
+    				pp.savefig(fig)
 				pp.close()
 				print_ok("Plots Saved")
 			

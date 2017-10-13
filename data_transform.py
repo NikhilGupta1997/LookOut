@@ -35,18 +35,19 @@ def read_data():
 	data['IAT'] = data['NEXT_TIMESTAMP'] - data['TIMESTAMP']
 	data.insert(0,'MEAN_IAT', data.groupby('SOURCE')['IAT'].transform(lambda x: mean(x)))
 	data.IAT.fillna(data.MEAN_IAT, inplace=True)
-	data.insert(1,'IAT_VAR', data.groupby('SOURCE')['IAT'].transform(lambda x: variance(x)))
+	# data.insert(1,'IAT_VAR', data.groupby('SOURCE')['IAT'].transform(lambda x: variance(x)))
 
-	# # Add Quantile information based on Amount Spent by the User
-	# print "	-> Adding IAT Quantile Information"
-	# users = data.groupby('SOURCE')
-	# update_progress(0, 11)
-	# quant_list = []
-	# for i in range(11):
-	# 	data.insert(i,'QUANTILE_' + str(10*i), users.IAT.transform(lambda x: quantile(x)[i]))
-	# 	quant_list.append('QUANTILE_' + str(10*i))
-	# 	update_progress(i+1, 11)
-	# data['IAT_VAR']=data[quant_list].var(axis=1)
-	# print_ok("Transformations Complete")
+	# Add Quantile information based on Amount Spent by the User
+	print "	-> Adding IAT Quantile Information"
+	users = data.groupby('SOURCE')
+	update_progress(0, 11)
+	quant_list = []
+	for i in range(11):
+		data.insert(i,'QUANTILE_' + str(10*i), users.IAT.transform(lambda x: quantile(x)[i]))
+		quant_list.append('QUANTILE_' + str(10*i))
+		update_progress(i+1, 11)
+	data['IAT_VAR_MEAN']=data[quant_list].var(axis=1)
+	data['MEDIAN_IAT']=data[quant_list[5]]
+	print_ok("Transformations Complete")
 
 	return data

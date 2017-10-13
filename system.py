@@ -27,8 +27,8 @@ algo_iForests = True			# Depth based scoring algo
 
 # Which Outlier Choosing Algorithm to use
 merge_ranklists = False					# Merge ranks of each outlier
-generate_iForest = False					# Use iForests on all features
-global_outlier_list = [127, 129] 			# Used if both algorithms set to false
+generate_iForest = True					# Use iForests on all features
+global_outlier_list = [53, 107, 122, 127, 150] 		# Used if both algorithms set to false
 
 # Which Standardization Algorithm to use
 max_divide = False 				# Divide weights by max ranked weight
@@ -47,22 +47,26 @@ baseline =	False 				# Use baseline selection or not
 
 # Scatter Plot Features
 identity_features = ["IDs"]
-continuous_features = ['AMOUNT', 'DEST', 'LIFE', 'IN_EDGE', 'IAT_VAR', 'MEAN_IAT']
+continuous_features = ['SRC', 'DEST', 'EDGES_IN', 'EDGES_OUT', 'LIFE', 'MEDIAN_IAT', 'MEAN_IAT', 'IAT_VAR_MEAN']
 discrete_features = []
-compare_value = {'AMOUNT':1, 'DEST':1, 'LIFE':1, 'IN_EDGE':1, 'IAT_VAR':1, 'MEAN_IAT':1}
-discription = { 'AMOUNT': 'Total Amount', \
+compare_value = {'SRC':1, 'DEST':1, 'EDGES_IN':1, 'EDGES_OUT':1, 'MAX_PROP_IN':1, 'MAX_PROP_OUT':1, 'LIFE':1, 'MEDIAN_IAT':1, 'MEAN_IAT':1, 'IAT_VAR_MEAN':1}
+discription = { 'SRC': 'Unique Sources', \
 				'DEST': 'Unique Destinations', \
+				'EDGES_IN': '# of Incoming Mails', \
+				'EDGES_OUT': '# of Outgoing Mails', \
+				'MAX_PROP_IN': 'Single Source Prop.', \
+				'MAX_PROP_OUT': 'Single Destination Prop.', \
 				'LIFE': 'Lifetime', \
-				'IAT_VAR': 'IAT Variation', \
+				'MEDIAN_IAT': 'Median IAT', \
 				'MEAN_IAT': 'Average IAT', \
-				'IN_EDGE': '# of interactions'}
+				'IAT_VAR_MEAN': 'IAT Variance'}
 
 # Plot Marker Specifications
 colors = {0: '#33b8ff', 1: '#e67e22', 2: '#a569bd', 3: '#8aff33', 4: '#f6ff33'}
 outlier_color = {0: '#cce6ff', 1: '#FF4500'}
 shapes = {0: '^', 1: '.', 2: 's', 3: '*'}
 sizes = {1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8, 8: 9}
-blue_circle = 30
+blue_circle = 40
 
 # Terminal Colors
 RED = "\033[31m"

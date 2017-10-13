@@ -88,18 +88,20 @@ def scatter_outliers(plot, IDs, frequencies):
 	ax1.set_ylabel(yname, fontsize=SIZES['label'])
 	ax1.xaxis.set_tick_params(labelsize=SIZES['tick'])
 	ax1.yaxis.set_tick_params(labelsize=SIZES['tick'])
+	ax1.set_yscale('log')
+	ax1.set_xscale('log')
 	# plt.title(title)
 	plt.ylim([min(Y_data)/2.0, ceil(max(Y_data)*2.0)])
 	plt.xlim([min (X_data)/2.0, ceil(max(X_data)*2.0)])
 	plt.gcf().subplots_adjust(bottom=0.18, left=0.18)
-	plt.loglog(X_data, Y_data, 'k.')
+	ax1.scatter(X_data, Y_data, c = 'black', s = 50)
 	for outlier in frequencies.keys():
 		index = IDs.index(outlier)
-		size = frequencies[outlier][0]
+		size = frequencies[outlier][0]*10
 		if plot == frequencies[outlier][1]:
-			plt.loglog(X_data[index],Y_data[index], c = outlier_color[1], marker = shapes[1], mew = 0.1, ms = size, alpha = 0.75)
+			plt.scatter(X_data[index],Y_data[index], c = outlier_color[1], edgecolor='red', linewidth='1', s = int(size), alpha = 0.75)
 		else:
-			plt.loglog(X_data[index],Y_data[index], c = outlier_color[0], marker = shapes[1], mew = 0.1, ms = size, alpha = 0.75)
+			plt.scatter(X_data[index],Y_data[index], c = outlier_color[0], edgecolor='blue', linewidth='1', s = int(size), alpha = 0.75)
 	return fig
 
 """ CCDF Plot Functions """

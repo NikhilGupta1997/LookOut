@@ -231,8 +231,17 @@ def generate_frequency_list(plots, scaled_matrix):
 			max_val = score
 	frequencies = {}
 	for outlier in outlier_max_plot.keys():
-		m = interp1d([min_val,max_val],[blue_circle/3, blue_circle])
+		m = interp1d([min_val,max_val],[blue_circle*0.75, blue_circle])
 		size = m(outlier_max_plot[outlier][1])
 		frequencies[outlier] = [int(size), int(outlier_max_plot[outlier][0])]
 	return frequencies
 
+def realign(Vals, IDs, DEST_IDs):
+	output = []
+	for id in IDs:
+		try:
+			idx = DEST_IDs.index(id)
+			output.append(Vals[idx])
+		except:
+			output.append(0)
+	return output
