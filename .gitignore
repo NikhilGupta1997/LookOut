@@ -1,7 +1,9 @@
-deswaran-dblp/data/
-deswaran-dblp/files/
-deswaran-dblp/plots/
 .idea/
 *.pyc
-scalability-expts/Data/*.txt
-
+scalability/Data/*
+SPELLOUT-dblp/Data/*
+Data/dblp_all.txt
+SPELLOUT-dblp/Files
+SPELLOUT-dblp/dblp_1M.txt
+scalability_expts_io_problem/Data/*
+SPELLOUT-dblp/results/info.pkl

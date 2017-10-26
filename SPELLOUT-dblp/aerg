@@ -1,0 +1,9 @@
+num_outlier = 10
+seed = 1
+
+forest = IsolationForest(n_estimators=500, random_state=seed, contamination=num_outlier/343546.0)
+forest.fit(few_features)
+prediction = forest.predict(few_features)
+print [i for i in np.where(prediction == -1)[0]]
+print sorted([author_id_to_name[INFO['IDs'][i]] for i in np.where(prediction == -1)[0]])
+pickle.dump([INFO['IDs'][i] for i in np.where(prediction == -1)[0]], open('results/top%d.pkl' % num_outlier, 'wb'))
