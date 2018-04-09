@@ -1,7 +1,7 @@
 all: target
 
 target:
-	echo 'Target unknown'
+	python test.py
 
 clean:
 	rm -rf *.pyc */*.pyc */*/*.pyc
