@@ -7,26 +7,26 @@ from system import *
 
 """ BASELINES """
 # Baseline 1
-def best_greedy( graph, Budget ): # TopK
-	return graph.get_plot_ranks()[:Budget]
+def best_greedy( graph, budget ): # TopK
+	return graph.get_plot_ranks()[:budget]
 
 # Baseline 2
-def random_plots( graph, Budget ): # Random
+def random_plots( graph, budget ): # Random
 	plots = graph.get_plot_ranks()
-	return random.sample( plots, Budget )
+	return random.sample( plots, budget )
 
 """ LookOut Algorithm """
 # Select the optimised plot cover
-def best_plots( graph, Budget ):
+def best_plots( graph, budget ):
 	best_plot_list = []
 	# Continue choosing plots till the budget is exhausted
-	while Budget > 0:
+	while budget > 0:
 		# Choose the next best plot which mazimizes score
 		plot = graph.get_best_plot()
 		best_plot_list.append( int( plot ) )
 		# Update the graph after removing chosen plot
 		graph.update_graph( plot )
-		Budget -= 1
+		budget -= 1
 	# Return a list of the chosen plots
 	return best_plot_list
 

@@ -105,7 +105,7 @@ def print_ok(text):
 	start_color(OKGREEN)
 	print( "OK", end='' )
 	end_color()
-	print( " ]", end='' )
+	print( " ] ", end='' )
 	print( text )
 
 def print_fail(text):
@@ -114,7 +114,7 @@ def print_fail(text):
 	start_color(FAIL)
 	print( "FAIL", end='' )
 	end_color()
-	print( " ]", end='' )
+	print( " ] ", end='' )
 	print( text )
 
 def cprint(text, color=CYAN, end=None):
@@ -158,7 +158,7 @@ def generate_pairs(list1, list2):
 
 def combine_features(features):
 	arr = np.asarray(features, dtype = float)
-	arr[1:, :] = np.log(arr[1:, :])
+	arr[:, :] = np.log(arr[:, :])
 	return arr.transpose()
 
 def parse_cmdline():

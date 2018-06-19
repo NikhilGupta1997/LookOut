@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import oddball
+import sys
 from collections import defaultdict
 from math import log10, ceil, isnan
 from iForest import iForest
@@ -9,6 +10,7 @@ from system import *
 from helper import *
 
 plot_num = 0
+plt.rcParams.update({'figure.max_open_warning': 0}) # Inhibit warnings
 
 SIZES = {
 'title': 36,
@@ -56,8 +58,8 @@ def scatter_plot(X, Y, IDs, yname, xname, title, val):
 		scores = oddball.get_scores(median_points_X, median_points_Y, X, Y, IDs)
 
 	elif algo_iForests:
-		features = combine_features([IDs, X, Y])	
-		scores = iForest(features)
+		features = combine_features([X, Y])
+		scores = iForest(IDs, features)
 	else:
 		print_fail("Scoring Algorithm not Chosen")
 

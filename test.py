@@ -1,20 +1,20 @@
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import sys
-import datetime as dt
-import ranklist
-import time
 import copy
-from LookOut import LookOut
+import datetime as dt
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import ranklist
+import sys
+import time
 from data_transform import read_data
-from matplotlib.backends.backend_pdf import PdfPages
-from math import log
 from helper import *
-from system import *
+from iForest import iForest
+from LookOut import LookOut
+from math import log
+from matplotlib.backends.backend_pdf import PdfPages
 from plot_functions import *
 from structures import *
-from iForest import iForest
+from system import *
 
 data = read_data() # from data_transform.py
 
@@ -65,8 +65,8 @@ if scatter_show:
 # Get Outliers Scores if using iForests
 if generate_iForest:
 	cprint("Generating Graph File")
-	features = combine_features([eval(F) for F in identity_features + continuous_features + discrete_features])
-	iForest(features)
+	features = combine_features([eval(F) for F in continuous_features + discrete_features])
+	iForest(IDs, features)
 	print_ok("iForest Generation Complete")
 
 file = open(filefolder + logfile, 'w')
