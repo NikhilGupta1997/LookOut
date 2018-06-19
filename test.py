@@ -5,13 +5,15 @@ import sys
 import datetime as dt
 import ranklist
 import time
-from plotSpot import plotSpot
+import copy
+from LookOut import LookOut
 from data_transform import read_data
 from matplotlib.backends.backend_pdf import PdfPages
 from math import log
 from helper import *
 from system import *
 from plot_functions import *
+from structures import *
 from iForest import iForest
 
 data = read_data() # from data_transform.py
@@ -76,23 +78,25 @@ if not generate_iForest and not merge_ranklists:
 count = 0
 for N_val in N_list:
 	# Create graph between outliers and plots
-	cprint("Generating Graph File")
+	cprint("Generating Bipartite Graph")
 	scaled_matrix, normal_matrix = ranklist.generate_graph(P_val, N_val, rank_matrix)
-	print_ok("Graph File Generated")
-	# Run plotSpot to get selected graphs
-	for algo in ["SpellOut", "TopK"]:
+	saved_graph = Graph(scaled_matrix)
+	print_ok("Graph Generated Successfully")
+	# Run appropriate algorithm to get list of selected graphs
+	for algo in ["LookOut", "TopK"]:
 		plot_coverage = []
 		for B in Budget:
-			if algo != "SpellOut"  and not baseline:
+			if algo != "LookOut"  and not baseline:
 				continue
 			
 			count += 1
+			graph = copy.deepcopy(saved_graph)
 			cprint("\nIteration " + str(count), RED)
 			print "N_val = ", N_val, " Budget = ", B, " ALGO = ", algo
 			
 			start_time = time.time()
 			cprint ("Running PlotSpot Algorithm")
-			plots = plotSpot(B, scaled_matrix, algo)
+			plots = LookOut(graph, B, algo)
 			frequencies = generate_frequency_list(plots, scaled_matrix)
 			print_ok("PlotSpot Complete")
 			elapsed_time = time.time() - start_time

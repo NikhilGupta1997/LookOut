@@ -2,8 +2,8 @@ import argparse
 import csv
 import os.path
 import pandas as pd
-import sys
 import random
+import sys
 from helper import *
 from system import *
 
@@ -24,7 +24,7 @@ group.add_argument("-e", "--exclude", help="specify columns to exclude from the 
                     action="append", dest="exclude")
 args = parser.parse_args()
 
-### Validate Input Arguments From User ###
+""" Validate Input Arguments From User """
 # Check if the datafile exists
 datafile = datafolder + args.file
 if os.path.isfile(datafile):
@@ -76,7 +76,7 @@ if args.include or args.exclude:
 
 	print_ok("The field names to be read are : " + str(headers))
 
-### Retreive Data ###
+""" Retreive Data """
 # Read data from csv file and store into a pandas dataframe
 try:
 	df = pd.read_csv(datafolder + args.file)
@@ -103,6 +103,6 @@ elif args.mode == 'random':
 
 print_ok("Data transformed to specifications. Final shape: " + str(df.shape))
 
-### Export Data ###
+""" Export Data """
 df.to_csv(datafolder + args.target_file, sep='\t')
 print_ok("Data written to file \"" + args.target_file + "\"")

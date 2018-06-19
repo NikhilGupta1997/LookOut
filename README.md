@@ -1,4 +1,4 @@
-# PlotSpot
+# LookOut
 
 ## system.py
 This is a configuration file which sets the environment and parameters of the code and algorithm. 

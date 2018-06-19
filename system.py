@@ -43,7 +43,7 @@ P_val = 1						# Scaling factor
 output_plots = True 			# Choose to show plots
 
 # Baselines
-baseline =	False 				# Use baseline selection or not
+baseline =	True 				# Use baseline selection or not
 
 # Scatter Plot Features
 identity_features = ["IDs"]

@@ -1,10 +1,12 @@
-import sys
+from __future__ import print_function
+
 import numpy as np
-import pandas.core.algorithms as algos
 import oddball
-from scipy.interpolate import interp1d
-from math import sqrt, log, isnan, pow
+import pandas.core.algorithms as algos
+import sys
 from collections import Counter
+from math import sqrt, log, isnan, pow
+from scipy.interpolate import interp1d
 from system import *
 
 # Returns bottom 5 percentile value in list
@@ -86,7 +88,7 @@ def parametric_max(X, num):
 
 def enable_warnings():
 	sys.stdout.write(WARNING)
-	print "..."
+	print( "..." )
 
 def disable_warnings():
 	sys.stdout.write(RESET)
@@ -99,27 +101,27 @@ def end_color():
 
 def print_ok(text):
 	end_color()
-	print "[ ",
+	print( "[ ", end='' )
 	start_color(OKGREEN)
-	print "OK",
+	print( "OK", end='' )
 	end_color()
-	print " ]",
-	print text
+	print( " ]", end='' )
+	print( text )
 
 def print_fail(text):
 	end_color()
-	print "[ ",
+	print( "[ ", end='' )
 	start_color(FAIL)
-	print "FAIL",
+	print( "FAIL", end='' )
 	end_color()
-	print " ]",
-	print text
+	print( " ]", end='' )
+	print( text )
 
-def cprint(text, color=CYAN):
+def cprint(text, color=CYAN, end=None):
 	if color == CYAN:
-		print
+		print()
 	start_color(color)
-	print text
+	print(text, end=end)
 	end_color()
 
 def update_progress(current, max):
