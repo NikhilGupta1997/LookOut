@@ -5,9 +5,9 @@ import oddball
 import pandas.core.algorithms as algos
 import sys
 from collections import Counter
+from display import *
 from math import sqrt, log, isnan, pow
 from scipy.interpolate import interp1d
-from system import *
 
 # Returns bottom 5 percentile value in list
 def get_bottom5(X):
@@ -134,20 +134,6 @@ def update_progress(current, max):
 	if progress == 1:
 		sys.stdout.write("\r")
 
-def get_total_plots(A, B, C, D, E):
-	total = 0
-	if scatter_show:
-		total += A
-	if ccdf_show:
-		total += B
-	if hist_show:
-		total += C
-	if time_series_show:
-		total += D
-	if band_show:
-		total += E
-	return total
-
 def generate_pairs(list1, list2):
 	pairs = []
 	for i, x in enumerate(list1):
@@ -233,7 +219,7 @@ def generate_frequency_list(plots, scaled_matrix):
 			max_val = score
 	frequencies = {}
 	for outlier in outlier_max_plot.keys():
-		m = interp1d([min_val,max_val],[blue_circle*0.75, blue_circle])
+		m = interp1d([min_val,max_val],[outlier_circle_size*0.75, outlier_circle_size])
 		size = m(outlier_max_plot[outlier][1])
 		frequencies[outlier] = [int(size), int(outlier_max_plot[outlier][0])]
 	return frequencies

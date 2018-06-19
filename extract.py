@@ -4,8 +4,8 @@ import os.path
 import pandas as pd
 import random
 import sys
-from helper import *
-from system import *
+from helper import print_ok, print_fail
+from system import datafolder
 
 # Parse Arguments to extract data script
 parser = argparse.ArgumentParser(description='Process type of data extraction and datafile')
@@ -54,6 +54,7 @@ except ValueError:
 	portion = 1.0
 
 # Get Fields of the file as specified by the User
+headers=None
 if args.include or args.exclude:
 	with open(datafile, 'rU') as f:
 		headers = csv.DictReader(f).fieldnames
@@ -104,5 +105,5 @@ elif args.mode == 'random':
 print_ok("Data transformed to specifications. Final shape: " + str(df.shape))
 
 """ Export Data """
-df.to_csv(datafolder + args.target_file, sep='\t')
+df.to_csv(datafolder + args.target_file, sep=',')
 print_ok("Data written to file \"" + args.target_file + "\"")

@@ -3,18 +3,11 @@
 # Files and Folders
 datafile = 'enron.csv'			# Data File name
 datafolder = 'Data/' 			# Data Folder
-filefolder = 'Files/'			# Files Folder
+logfolder = 'Logs/'				# Logs Folder
 plotfolder = 'Plots/'			# Plot Folder
 logfile = 'log.txt'				# Log File Name
 
 data_delimiter = ','			# Define delimiter for csv datafile
-
-# Which Plot Types to Generate
-scatter_show = True 			# Generate Scatter Plots
-ccdf_show = False				# Generate CCDF Plots
-hist_show = False				# Generate Histograms
-time_series_show = False		# Generate Time Series Plots
-band_show = False				# Generate Band Plots
 
 # Which Scoring Algortihm to use
 algo_oddball = False			# Oddball outlier scoring algo
@@ -33,7 +26,7 @@ quantile_bins = 20 				# Number of Quantiles to divide scores
 # System Variables
 N_list = [10, 20, 30, 40] 		# List of Number of Outliers
 Budget = [1,2,3,4,5,6]			# List to define budgets
-iForest_sample = 64			# iForest Tree Sample Size
+iForest_sample = 64				# iForest Tree Sample Size
 P_val = 1						# Scaling factor
 output_plots = True 			# Choose to show plots
 
@@ -55,27 +48,3 @@ discription = { 'SRC': 'Unique Sources', \
 				'MEDIAN_IAT': 'Median IAT', \
 				'MEAN_IAT': 'Average IAT', \
 				'IAT_VAR_MEAN': 'IAT Variance'}
-
-# Plot Marker Specifications
-colors = {0: '#33b8ff', 1: '#e67e22', 2: '#a569bd', 3: '#8aff33', 4: '#f6ff33'}
-outlier_color = {0: '#cce6ff', 1: '#FF4500'}
-shapes = {0: '^', 1: '.', 2: 's', 3: '*'}
-sizes = {1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8, 8: 9}
-blue_circle = 40
-
-# Terminal Colors
-RED = "\033[31m"
-BLUE = "\033[34m"
-YELLOW = "\033[33m"
-GREEN = "\033[32m"
-VIOLET = "\033[35m"
-RESET = "\033[0;0m"
-BOLD = "\033[1m"
-UNDERLINE = "\033[4m"
-REVERSE = "\033[7m"
-HEADER = "\033[95m"
-OKBLUE = "\033[94m"
-OKGREEN = "\033[92m"
-CYAN = "\033[96m"
-WARNING = "\033[93m"
-FAIL = "\033[91m"

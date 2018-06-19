@@ -28,38 +28,37 @@ print_ok("Plot Helpers Generated")
 """ Scatter Plots """
 rank_matrix = []
 scatter_plots = 0 # Count of the number of scatter plots generated
-if scatter_show:
-	cprint ("Generating Scatter Plots")
-	enable_warnings()
-	['SRC', 'DEST', 'EDGES_IN', 'EDGES_OUT', 'LIFE', 'MEDIAN_IAT', 'MEAN_IAT', 'IAT_VAR_MEAN']
-	SRC = fix_zero_error(destinations['SOURCE'].nunique().values.tolist())
-	DEST = fix_zero_error(users['DESTINATION'].nunique().values.tolist())
-	LIFE = fix_zero_error(users['LIFETIME'].first().values.tolist())
-	EDGES_IN = fix_zero_error(destinations['WEIGHT'].count().values.tolist())
-	EDGES_OUT = fix_zero_error(users['WEIGHT'].count().values.tolist())
-	IAT_VAR_MEAN = fix_zero_error(users['IAT_VAR_MEAN'].first().values.tolist())
-	MEAN_IAT = fix_zero_error(users['MEAN_IAT'].first().values.tolist())
-	MEDIAN_IAT = fix_zero_error(users['MEDIAN_IAT'].first().values.tolist())
-	IDs = [key for key, val in users['IAT_VAR_MEAN']]
-	DEST_IDs = [key for key, val in destinations['SOURCE']]
-	SRC = realign(SRC, IDs, DEST_IDs)
-	EDGES_IN = realign(EDGES_IN, IDs, DEST_IDs)
+cprint ("Generating Scatter Plots")
+enable_warnings()
+['SRC', 'DEST', 'EDGES_IN', 'EDGES_OUT', 'LIFE', 'MEDIAN_IAT', 'MEAN_IAT', 'IAT_VAR_MEAN']
+SRC = fix_zero_error(destinations['SOURCE'].nunique().values.tolist())
+DEST = fix_zero_error(users['DESTINATION'].nunique().values.tolist())
+LIFE = fix_zero_error(users['LIFETIME'].first().values.tolist())
+EDGES_IN = fix_zero_error(destinations['WEIGHT'].count().values.tolist())
+EDGES_OUT = fix_zero_error(users['WEIGHT'].count().values.tolist())
+IAT_VAR_MEAN = fix_zero_error(users['IAT_VAR_MEAN'].first().values.tolist())
+MEAN_IAT = fix_zero_error(users['MEAN_IAT'].first().values.tolist())
+MEDIAN_IAT = fix_zero_error(users['MEDIAN_IAT'].first().values.tolist())
+IDs = [key for key, val in users['IAT_VAR_MEAN']]
+DEST_IDs = [key for key, val in destinations['SOURCE']]
+SRC = realign(SRC, IDs, DEST_IDs)
+EDGES_IN = realign(EDGES_IN, IDs, DEST_IDs)
 
-	feature_pairs = generate_pairs(continuous_features, continuous_features + discrete_features)
+feature_pairs = generate_pairs(continuous_features, continuous_features + discrete_features)
 
-	pp = PdfPages(plotfolder + 'scatterplots.pdf')
-	for i, features in enumerate(feature_pairs):	
-		# Generate Plot
-		Y = features[0]
-		X = features[1]
-		fig, rank_list = scatter_plot(eval(X), eval(Y), IDs, discription[Y], discription[X], discription[Y] + ' vs ' + discription[X], compare_value[X])
-		rank_matrix.append(rank_list)
-		if output_plots:
-			pp.savefig(fig)
-		update_progress(i+1, len(feature_pairs))
-	pp.close()
-	scatter_plots = len(feature_pairs)
-	print_ok('Scatter Plots Generated')
+pp = PdfPages(plotfolder + 'scatterplots.pdf')
+for i, features in enumerate(feature_pairs):	
+	# Generate Plot
+	Y = features[0]
+	X = features[1]
+	fig, rank_list = scatter_plot(eval(X), eval(Y), IDs, discription[Y], discription[X], discription[Y] + ' vs ' + discription[X], compare_value[X])
+	rank_matrix.append(rank_list)
+	if output_plots:
+		pp.savefig(fig)
+	update_progress(i+1, len(feature_pairs))
+pp.close()
+scatter_plots = len(feature_pairs)
+print_ok('Scatter Plots Generated')
 
 """ PlotSPOT Algorithm """
 # Get Outliers Scores if using iForests
@@ -74,7 +73,7 @@ if not generate_iForest and not merge_ranklists:
 	N_list = [len(global_outlier_list)]
 
 count = 0
-file = open(filefolder + logfile, 'w')
+file = open(logfolder + logfile, 'w')
 for N_val in N_list:
 	# Create graph between outliers and plots
 	cprint("Generating Bipartite Graph")

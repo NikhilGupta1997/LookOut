@@ -1,9 +1,10 @@
 from __future__ import print_function
 
 import random
+from display import OKBLUE
 from helper import cprint, print_fail
 from structures import *
-from system import *
+
 
 """ BASELINES """
 # Baseline 1

@@ -67,12 +67,6 @@ def scatter_plot(X, Y, IDs, yname, xname, title, val):
 	# Write rank and scores to outputfile	
 	return fig, scores
 
-# Outlier overlay on plot
-def scatter_overlay(X, Y):
-	plt.subplot(211)
-	for i in range(len(X)):
-		plt.loglog(X[i],Y[i], c = colors[i%5], marker = shapes[i/5], mew = 0.0, ms = 10)
-
 # Find Outliers and frquency for plot
 def scatter_outliers(plot, IDs, frequencies):
 	fig = plt.figure(plot)
