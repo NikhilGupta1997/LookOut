@@ -1,7 +1,3 @@
-from collections import defaultdict
-from math import log, ceil
-import random
-import numpy as np
 from system import iForest_sample
 from sklearn.ensemble import IsolationForest
 

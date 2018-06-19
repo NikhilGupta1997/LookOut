@@ -1,13 +1,14 @@
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 import oddball
+import pandas as pd
 import sys
 from collections import defaultdict
-from math import log10, ceil, isnan
-from iForest import iForest
-from system import *
 from helper import *
+from iForest import iForest
+from math import log10, ceil, isnan
+from system import *
+
 
 plot_num = 0
 plt.rcParams.update({'figure.max_open_warning': 0}) # Inhibit warnings

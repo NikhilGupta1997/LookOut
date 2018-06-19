@@ -1,13 +1,13 @@
-import numpy as np
-import pandas as pd
 import glob
-import os
 import math
-from itertools import groupby
-from operator import itemgetter
-from iForest import forest_outliers
+import numpy as np
+import os
+import pandas as pd
 from collections import Counter
 from helper import update_progress, print_ok, print_fail, scale, scaling_function
+from iForest import forest_outliers
+from itertools import groupby
+from operator import itemgetter
 from system import *
 
 def read_file(filename):
@@ -64,12 +64,6 @@ def round_off(new_list):
 	new_list[:,1] = new_scores
 	return new_list
 
-def remove_file(file):
-	try:
-		os.remove(filefolder + file)
-	except OSError:
-		pass
-
 def calculate_outliers(N_val, P_val, rank_matrix):
 	print "\t-> Reading Rank List Files"
 	rank_lists = [scaling_function(list, P_val) for list in rank_matrix]
@@ -86,8 +80,6 @@ def calculate_outliers(N_val, P_val, rank_matrix):
 	return rank_lists, cover_lists, outliers, plot_ids
 
 def generate_graph(P_val, N_val, rank_matrix):
-	remove_file(outputfile)
-	remove_file(coverfile)
 	rank_lists, cover_lists, outliers, plot_ids = calculate_outliers(N_val, P_val, rank_matrix)
 	print "\t-> Standardising Outlier Weights"
 	scaled_matrix, normal_matrix = [], []

@@ -1,15 +1,10 @@
 """ Define System Variables """
 
 # Files and Folders
-sasfile = 'fulldata.sas7bdat' 	# SAS Data File name	
-datafile = 'enron.csv'		# Data File name
+datafile = 'enron.csv'			# Data File name
 datafolder = 'Data/' 			# Data Folder
 filefolder = 'Files/'			# Files Folder
 plotfolder = 'Plots/'			# Plot Folder
-outputfile = 'outlier-plot.txt'	# Outputfile Name for outlier-plot graph
-coverfile = 'outlier-cover.txt'	# Outputfile Name for outlier-plot graph
-rankfile = '_ranks.txt'			# Outpufile for individual plot outlier scores
-frequencyfile = 'freq.txt'		# Frequency file for outliers in focus
 logfile = 'log.txt'				# Log File Name
 
 data_delimiter = ','			# Define delimiter for csv datafile
@@ -84,4 +79,3 @@ OKGREEN = "\033[92m"
 CYAN = "\033[96m"
 WARNING = "\033[93m"
 FAIL = "\033[91m"
-

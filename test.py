@@ -69,13 +69,12 @@ if generate_iForest:
 	iForest(IDs, features)
 	print_ok("iForest Generation Complete")
 
-file = open(filefolder + logfile, 'w')
-
 # Use outlier list if provided
 if not generate_iForest and not merge_ranklists:
 	N_list = [len(global_outlier_list)]
 
 count = 0
+file = open(filefolder + logfile, 'w')
 for N_val in N_list:
 	# Create graph between outliers and plots
 	cprint("Generating Bipartite Graph")
