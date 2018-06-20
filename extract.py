@@ -4,7 +4,7 @@ import os.path
 import pandas as pd
 import random
 import sys
-from helper import print_ok, print_fail
+from display import print_ok, print_fail
 
 # Parse Arguments to extract data script
 parser = argparse.ArgumentParser( description='Process type of data extraction and datafile' )

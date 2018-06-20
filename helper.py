@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import numpy as np
 import os
 import pandas.core.algorithms as algos
@@ -27,6 +25,7 @@ def get_std_dev( data ):
 	arr = np.array(data)
 	return np.std(arr)
 
+""" Data Parse Functions """
 # Helps to remove zeros to prevent log error
 def fix_zero_error(X):
 	return [ 1 if x == 0 else x for x in X]
@@ -46,101 +45,6 @@ def variance(x):
 	vals = x.values
 	return np.var(vals[:-1])
 
-# Calculates the log variance error of a line w.r.t. its band plot
-def logvar(X, mid, low, high):
-	var = 0.0
-	for i in range(0,10):
-		val = X['QUANTILE_' + str(i*10)].max()
-		if val < low[i] or val > high[i]:
-			var += 2*log(max(abs(val - mid[i]),1))
-		else:
-			var += log(max(abs(val - mid[i]),1))	
-	return var
-
-# Map the MCC indexes between two lists
-def get_MCC_indexes(X1, X2):
-	intersect = list(set(X1) & set(X2))
-	ind1 = [X1.index(x) for x in intersect]
-	ind2 = [X2.index(x) for x in intersect]
-	return list(zip(ind1, ind2))
-
-# Generate X values (MCC codes)
-def generate_X(X, indexes):
-	return [X[i] for i,_ in indexes]
-
-# Generate Y values (Difference between list values)
-def generate_Y(Y1, Y2, indexes):
-	return [Y1[i] - Y2[j] for i,j in indexes]
-
-def parametric_min(X, num):
-	counts = sorted(Counter(X).items())
-	for i in range(len(counts)):
-		if counts[i][1] >= num:
-			return counts[i][0]
-	return None
-
-def parametric_max(X, num):
-	counts = sorted(Counter(X).items(), reverse=True)
-	for i in range(len(counts)):
-		if counts[i][1] >= num:
-			return counts[i][0]
-	return None
-
-def enable_warnings():
-	sys.stdout.write(WARNING)
-	print( "..." )
-
-def disable_warnings():
-	sys.stdout.write(RESET)
-
-def start_color(color):
-	sys.stdout.write(color)
-
-def end_color():
-	sys.stdout.write(RESET)
-
-def print_ok(text):
-	end_color()
-	print( "[ ", end='' )
-	start_color(OKGREEN)
-	print( "OK", end='' )
-	end_color()
-	print( " ] ", end='' )
-	print( text )
-
-def print_fail(text):
-	end_color()
-	print( "[ ", end='' )
-	start_color(FAIL)
-	print( "FAIL", end='' )
-	end_color()
-	print( " ] ", end='' )
-	print( text )
-
-def cprint(text, color=CYAN, end=None):
-	if color == CYAN:
-		print()
-	start_color(color)
-	print(text, end=end)
-	end_color()
-
-def update_progress(current, max):
-	progress = float(current) / max
-	barLength = 10
-	block = int(round(barLength*progress))
-	text = "\rPercent: [{0}] {1:.2f}%".format( "#"*block + "-"*(barLength - block) , progress*100)
-	sys.stdout.write(text)
-	sys.stdout.flush()
-	if progress == 1:
-		sys.stdout.write("\r")
-
-# def generate_pairs(list1, list2):
-# 	pairs = []
-# 	for i, x in enumerate(list1):
-# 		for j, y in enumerate(list2):
-# 			if x != y and j >= i:
-# 				pairs.append((x, y))
-# 	return pairs
 
 def generate_pairs(keys):
 	pairs = []
@@ -150,7 +54,6 @@ def generate_pairs(keys):
 			if j > i:
 				pairs.append( (keys[i], keys[j]) )
 	return pairs
-
 
 def combine_features(features):
 	# Obtain Ids and check if all ids match
@@ -162,19 +65,6 @@ def combine_features(features):
 	data = [ np.log(feature.get_data()) if feature.get_log() else np.array(feature.get_data()) for feature in features ]
 	data = np.asarray(data, dtype = float)
 	return ids, data.transpose()
-
-def parse_cmdline():
-    from optparse import OptionParser
-    parser = OptionParser()
-    parser.add_option("--p_val", dest="p_val",
-                      default = -0.8,
-                      help="outlier scoring parameter")
-
-    parser.add_option("--budget", dest="budget",
-                      default = 5,
-                      help = "budget of plots")
-    (options, args) = parser.parse_args()
-    return float(options.p_val), int(options.budget)
 
 def scale(x, P_val):
 	return pow(float(1 + P_val*x), float(1 / P_val))

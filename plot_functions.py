@@ -1,13 +1,9 @@
 import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import sys
-from collections import defaultdict
-from helper import *
+from display import *
+from helper import combine_features, generate_pairs
 from iForest import iForest
-from math import log10, ceil, isnan
+from math import ceil
 from matplotlib.backends.backend_pdf import PdfPages
-from system import *
 
 SIZES = {
 'title': 36,
@@ -19,7 +15,7 @@ SIZES = {
 
 """ Scatter Plot Functions """
 def generate_scatter_plots(args, features):
-	cprint ("Generating Scatter Plots")
+	cprint( "Generating Scatter Plots" )
 	feature_pairs = generate_pairs(features.keys())
 	pp = PdfPages(args.plotfolder + 'scatterplots.pdf')
 	plot_dict = {}
@@ -36,6 +32,7 @@ def generate_scatter_plots(args, features):
 	print_ok('Scatter Plots Generated')
 	return rank_matrix, plot_dict
 
+# Get scatter plot outlier scores and figure
 def scatter_plot(feature_X, feature_Y, make_plot=False):
 	ids, data = combine_features([feature_X, feature_Y])
 	scores = iForest(ids, data)
@@ -61,17 +58,17 @@ def scatter_outliers(feature_X, feature_Y, frequencies, plot):
 	Y_data = feature_Y.get_data()
 	ids = feature_X.get_ids()
 	fig = plt.figure()
-	ax1 = fig.add_subplot(111)
-	ax1.set_xlabel(feature_X.get_description(), fontsize=SIZES['label'])
-	ax1.set_ylabel(feature_Y.get_description(), fontsize=SIZES['label'])
-	ax1.xaxis.set_tick_params(labelsize=SIZES['tick'])
-	ax1.yaxis.set_tick_params(labelsize=SIZES['tick'])
-	ax1.set_yscale('log')
-	ax1.set_xscale('log')
+	ax = fig.add_subplot(111)
+	ax.set_xlabel(feature_X.get_description(), fontsize=SIZES['label'])
+	ax.set_ylabel(feature_Y.get_description(), fontsize=SIZES['label'])
+	ax.xaxis.set_tick_params(labelsize=SIZES['tick'])
+	ax.yaxis.set_tick_params(labelsize=SIZES['tick'])
+	ax.set_yscale('log')
+	ax.set_xscale('log')
 	plt.ylim([min(Y_data)/2.0, ceil(max(Y_data)*2.0)])
 	plt.xlim([min (X_data)/2.0, ceil(max(X_data)*2.0)])
 	plt.gcf().subplots_adjust(bottom=0.18, left=0.18)
-	ax1.scatter(X_data, Y_data, c = 'black', s = 50)
+	ax.scatter(X_data, Y_data, c = 'black', s = 50)
 	for outlier in frequencies.keys():
 		index = ids.index(outlier)
 		size = frequencies[outlier][0]*10

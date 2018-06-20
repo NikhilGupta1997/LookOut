@@ -1,13 +1,8 @@
-import glob
-import math
 import numpy as np
-import os
 import pandas as pd
-from collections import Counter
-from helper import *
+from display import print_ok, update_progress
+from helper import scaling_function, combine_features
 from iForest import *
-from itertools import groupby
-from operator import itemgetter
 
 def combine_lists(rank_list):
 	users = {}
@@ -28,13 +23,13 @@ def combine_lists(rank_list):
 	return [x[0] for x in sorted(score_list, key=lambda t: t[1])]
 
 def calculate_outliers(args, features, rank_matrix):
-	print "\t-> Scaling Outlier Scores"
+	print( "\t-> Scaling Outlier Scores" )
 	if args.merge_ranklists:		
-		print "\t-> Merging Rank Lists"
+		print( "\t-> Merging Rank Lists" )
 		rank_lists = [scaling_function(list, float(args.p_val) ) for list in rank_matrix]
 		outliers = combine_lists(rank_lists)[-args.num_outliers:]
 	elif args.generate_iForest:
-		print "\t-> Generating iForest Outliers"
+		print( "\t-> Generating iForest Outliers" )
 		ids, data = combine_features(features.values())
 		scores = iForest(ids, data)
 		outliers = forest_outliers(args.num_outliers, scores)

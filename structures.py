@@ -1,7 +1,7 @@
 import sys
 from bisect import bisect_left
 from collections import defaultdict
-from helper import print_fail
+from display import print_fail
 
 """ Definition of an Outlier """
 class Outlier:
@@ -92,7 +92,7 @@ class Graph:
 
 	def insert_edge( self, edge ):
 		if edge.get_plot() not in self.edges:
-			self.edges[ edge.get_plot() ] = { }
+			self.edges[ edge.get_plot() ] = {}
 		self.edges[ edge.get_plot() ][ edge.get_outlier() ] = edge
 		self.adjacency_list_plots[ edge.get_plot() ].append( edge.get_outlier() )
 		self.adjacency_list_outliers[ edge.get_outlier() ].append( edge.get_plot() )

@@ -1,24 +1,10 @@
 import argparse
-import copy
-import datetime as dt
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import ranklist
-import sys
-import time
 from data import Feature
 from data_transform import read_data
-from helper import *
-from iForest import iForest
-from LookOut import LookOut
-from math import log
-from matplotlib.backends.backend_pdf import PdfPages
+from helper import init_environment
 from outliers import calculate_outliers
-from plot_functions import *
+from plot_functions import generate_scatter_plots
 from run_algos import run
-from structures import *
-from system import *
 
 """ Parse Arguments to extract data script """
 parser = argparse.ArgumentParser(description='Process type of data extraction and datafile')
