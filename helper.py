@@ -7,25 +7,25 @@ import sys
 from collections import Counter
 from display import *
 from math import sqrt, log, isnan, pow
+from numpy import median
 from scipy.interpolate import interp1d
 
-# Returns bottom 5 percentile value in list
-def get_bottom5(X):
-	index = int(0.05*len(X))
-	return sorted(X)[index]
+""" Data Analysis Functions """
+def get_min( data ):
+	return min(data)
 
-# Returns top 5 percentile value in list
-def get_top5(X):
-	index = int(0.95*len(X))
-	return sorted(X)[index]
+def get_max( data ):
+	return max(data)
 
-# Median of a list
-def get_median(X):
-	return np.median(X)
+def get_median( data ):
+	return median(data)
 
-# Geometric mean between 2 numbers
-def geometric_mean(a, b):
-	return sqrt(a*b)
+def get_mean( data ):
+	return sum(data) / float(len(data))
+
+def get_std_dev( data ):
+	arr = np.array(data)
+	return np.std(arr)
 
 # Helps to remove zeros to prevent log error
 def fix_zero_error(X):
@@ -134,18 +134,34 @@ def update_progress(current, max):
 	if progress == 1:
 		sys.stdout.write("\r")
 
-def generate_pairs(list1, list2):
+# def generate_pairs(list1, list2):
+# 	pairs = []
+# 	for i, x in enumerate(list1):
+# 		for j, y in enumerate(list2):
+# 			if x != y and j >= i:
+# 				pairs.append((x, y))
+# 	return pairs
+
+def generate_pairs(keys):
 	pairs = []
-	for i, x in enumerate(list1):
-		for j, y in enumerate(list2):
-			if x != y and j >= i:
-				pairs.append((x, y))
+	size = len(keys)
+	for i in range(0, size):
+		for j in range(0, size):
+			if j > i:
+				pairs.append( (keys[i], keys[j]) )
 	return pairs
 
+
 def combine_features(features):
-	arr = np.asarray(features, dtype = float)
-	arr[:, :] = np.log(arr[:, :])
-	return arr.transpose()
+	# Obtain Ids and check if all ids match
+	ids = features[0].get_ids()
+	for feature in features[1:]:
+		if ids != feature.get_ids():
+			print_fail("Ids dont match between features: " + feature.get_name() + " and " + feature[0].get_name())
+			sys.exit()
+	data = [ np.log(feature.get_data()) if feature.get_log() else np.array(feature.get_data()) for feature in features ]
+	data = np.asarray(data, dtype = float)
+	return ids, data.transpose()
 
 def parse_cmdline():
     from optparse import OptionParser
@@ -234,7 +250,7 @@ def realign(Vals, IDs, DEST_IDs):
 			output.append(0)
 	return output
 
-def check_environment(args):
+def init_environment(args):
 	file = args.datafolder + args.datafile
 	if os.path.isfile( file ):
 		print_ok( "Datafile \"" + file + "\" successfully found" )
@@ -263,3 +279,9 @@ def check_environment(args):
 		print_ok( "iForests outlier detection algorithm will be used to generate a global outlier list" )
 	else:
 		print_ok( "The global outlier list has been specified by the user" ) 
+
+	try:
+		float(args.p_val)
+	except ValueError as e:
+		print_fail( "p_val specified is not a float value. Using default value 1.0" )
+		args.p_val = 1.0

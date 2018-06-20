@@ -41,6 +41,6 @@ def LookOut( graph, budget, algo="LookOut" ):
 	else:
 		print_fail( "The Algorithm specified doesn't lie in { LookOut, TopK, Random }. Skipping ..." )
 		return
-	print( "\t\t-> Choosen Plots are ", end='') 
+	print( "\t-> Choosen Plots are ", end='' ) 
 	cprint( str(plots), OKBLUE )
 	return plots

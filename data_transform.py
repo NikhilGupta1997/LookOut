@@ -1,5 +1,6 @@
 import pandas as pd
 import sys
+from data import Feature
 from helper import *
 
 def read_data(args):
@@ -8,7 +9,6 @@ def read_data(args):
 	
 	# Read data from csv file
 	cprint("Reading File")
-	enable_warnings()
 	data = pd.read_csv(args.datafolder + args.datafile, delimiter=args.data_delimiter) # Be patient, takes some time
 	disable_warnings()
 	print_ok("File Read Complete")
@@ -49,4 +49,34 @@ def read_data(args):
 	data['MEDIAN_IAT']=data[quant_list[5]]
 	print_ok("Transformations Complete")
 
-	return data
+	""" Plot Generator Helper Data """
+	cprint("Generating Plot Helper Data")
+	users = data.groupby('SOURCE')
+	destinations = data.groupby('DESTINATION')
+	print_ok("Plot Helpers Generated")
+
+	SRC = fix_zero_error(destinations['SOURCE'].nunique().values.tolist())
+	DEST = fix_zero_error(users['DESTINATION'].nunique().values.tolist())
+	LIFE = fix_zero_error(users['LIFETIME'].first().values.tolist())
+	EDGES_IN = fix_zero_error(destinations['WEIGHT'].count().values.tolist())
+	EDGES_OUT = fix_zero_error(users['WEIGHT'].count().values.tolist())
+	IAT_VAR_MEAN = fix_zero_error(users['IAT_VAR_MEAN'].first().values.tolist())
+	MEAN_IAT = fix_zero_error(users['MEAN_IAT'].first().values.tolist())
+	MEDIAN_IAT = fix_zero_error(users['MEDIAN_IAT'].first().values.tolist())
+	IDs = [key for key, val in users['IAT_VAR_MEAN']]
+	DEST_IDs = [key for key, val in destinations['SOURCE']]
+	SRC = realign(SRC, IDs, DEST_IDs)
+	EDGES_IN = realign(EDGES_IN, IDs, DEST_IDs)
+	features = {}
+
+	features['SRC'] = Feature('SRC', SRC, IDs)
+	features['DEST'] = Feature('DEST', DEST, IDs)
+	features['LIFE'] = Feature('LIFE', LIFE, IDs)
+	features['EDGES_IN'] = Feature('EDGES_IN', EDGES_IN, IDs)
+	features['EDGES_OUT'] = Feature('EDGES_OUT', EDGES_OUT, IDs)
+	features['IAT_VAR_MEAN'] = Feature('IAT_VAR_MEAN', IAT_VAR_MEAN, IDs)
+	features['MEAN_IAT'] = Feature('MEAN_IAT', MEAN_IAT, IDs)
+	features['MEDIAN_IAT'] = Feature('MEDIAN_IAT', MEDIAN_IAT,IDs)
+	features['EDGES_IN'] = Feature('EDGES_IN', EDGES_IN, IDs)
+
+	return features
