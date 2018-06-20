@@ -1,16 +1,15 @@
 import pandas as pd
 import sys
 from helper import *
-from system import *
 
-def read_data():
+def read_data(args):
 	print "Filename = ",
-	cprint(datafile, OKGREEN)
+	cprint(args.datafile, OKGREEN)
 	
 	# Read data from csv file
 	cprint("Reading File")
 	enable_warnings()
-	data = pd.read_csv(datafolder + datafile, delimiter=data_delimiter) # Be patient, takes some time
+	data = pd.read_csv(args.datafolder + args.datafile, delimiter=args.data_delimiter) # Be patient, takes some time
 	disable_warnings()
 	print_ok("File Read Complete")
 

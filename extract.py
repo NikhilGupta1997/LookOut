@@ -5,7 +5,6 @@ import pandas as pd
 import random
 import sys
 from helper import print_ok, print_fail
-from system import datafolder
 
 # Parse Arguments to extract data script
 parser = argparse.ArgumentParser(description='Process type of data extraction and datafile')
@@ -26,11 +25,10 @@ args = parser.parse_args()
 
 """ Validate Input Arguments From User """
 # Check if the datafile exists
-datafile = datafolder + args.file
-if os.path.isfile(datafile):
-	print_ok("Datafile \"" + datafile + "\" successfully found")
+if os.path.isfile(args.file):
+	print_ok("Datafile \"" + args.file + "\" successfully found")
 else:
-	print_fail("Datafile \"" + datafile + "\" was not found")
+	print_fail("Datafile \"" + args.file + "\" was not found")
 	sys.exit(1)
 
 # Check if mode is valid

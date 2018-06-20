@@ -8,7 +8,6 @@ from helper import update_progress, print_ok, print_fail, scale, scaling_functio
 from iForest import forest_outliers
 from itertools import groupby
 from operator import itemgetter
-from system import *
 
 def read_file(filename):
 	return np.matrix([map(float, line.strip('\n').split('\t')) for line in open(filename)])
@@ -43,44 +42,30 @@ def combine_lists(rank_list):
 def write_to_output(list, plot):
 	return [[int(val.item(0)), plot, val.item(1)] for val in list]
 
-def quantile_cut(scores, max_score):
-	score_list = [score.tolist()[0][0] for score in scores]
-	bins = np.linspace(0, max_score, quantile_bins)
-	new_scores = np.matrix([float(bin)/quantile_bins for bin in np.digitize(score_list, bins)])
-	return new_scores.transpose()
-
-def standardize(new_list, plot_values, index):
-	if max_divide:
-		new_list[:,1] /= plot_values[index]
-	elif quantile_divide:
-		scores = new_list[:,1]
-		new_scores = quantile_cut(scores, plot_values[index])
-		new_list[:,1] = new_scores
-	return new_list
-
 def round_off(new_list):
 	scores = new_list[:,1]
 	new_scores = np.matrix([float("{0:.2f}".format(float(score))) for score in scores]).transpose()
 	new_list[:,1] = new_scores
 	return new_list
 
-def calculate_outliers(N_val, P_val, rank_matrix):
+def calculate_outliers(args, N_val, rank_matrix):
 	print "\t-> Reading Rank List Files"
+	P_val = float(args.p_val)
 	rank_lists = [scaling_function(list, P_val) for list in rank_matrix]
 	cover_lists = [np.matrix(list) for list in rank_matrix]
 	plot_ids = range(1, len(rank_lists) + 1)
-	if merge_ranklists:		
+	if args.merge_ranklists:		
 		print "\t-> Merging Rank Lists"
 		outliers = combine_lists(rank_lists)[-N_val:]
-	elif generate_iForest:
+	elif args.generate_iForest:
 		print "\t-> Generating iForest Outliers"
 		outliers = forest_outliers(N_val)
 	else:
 		outliers = global_outlier_list
 	return rank_lists, cover_lists, outliers, plot_ids
 
-def generate_graph(P_val, N_val, rank_matrix):
-	rank_lists, cover_lists, outliers, plot_ids = calculate_outliers(N_val, P_val, rank_matrix)
+def generate_graph(args, N_val, rank_matrix):
+	rank_lists, cover_lists, outliers, plot_ids = calculate_outliers(args, N_val, rank_matrix)
 	print "\t-> Standardising Outlier Weights"
 	scaled_matrix, normal_matrix = [], []
 	for index, list in enumerate(rank_lists):

@@ -1,8 +1,6 @@
-from system import iForest_sample
 from sklearn.ensemble import IsolationForest
 
 scores = []
-sample_size = iForest_sample
 
 def forest_outliers(N):
 	outliers = scores[:N]
@@ -10,7 +8,7 @@ def forest_outliers(N):
 
 def iForest(ids, features):
 	global scores
-	clf = IsolationForest(max_samples=sample_size)
+	clf = IsolationForest(max_samples=64)
 	clf.fit(features)
 	scores = clf.decision_function(features)
 	tuples = [ (ids[i], float(0.5 - scores[i])*2.0) for i in range(0, len(ids))]

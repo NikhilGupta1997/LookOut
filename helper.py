@@ -1,7 +1,7 @@
 from __future__ import print_function
 
 import numpy as np
-import oddball
+import os
 import pandas.core.algorithms as algos
 import sys
 from collections import Counter
@@ -233,3 +233,33 @@ def realign(Vals, IDs, DEST_IDs):
 		except:
 			output.append(0)
 	return output
+
+def check_environment(args):
+	file = args.datafolder + args.datafile
+	if os.path.isfile( file ):
+		print_ok( "Datafile \"" + file + "\" successfully found" )
+	else:
+		print_fail( "Datafile \"" + file + "\" was not found" )
+		sys.exit(1)
+
+	if not os.path.exists( args.logfolder ):
+	    os.makedirs( args.logfolder )
+	    print_ok( "Logfolder successfully created" )
+	else:
+		print_ok( "Logfolder already found" )
+
+	if not os.path.exists( args.plotfolder ):
+	    os.makedirs( args.plotfolder )
+	    print_ok( "plotfolder successfully created" )
+	else:
+		print_ok( "plotfolder already found" )
+
+	if args.merge_ranklists and args.generate_iForest:
+		print_fail( "Both merge ranklists and iForests cannot be made active at the same time to generate global outlier list" )
+		sys.exit(1)
+	elif args.merge_ranklists:
+		print_ok( "Merge Ranklists algorithm will be used to generate a global outlier list" )
+	elif args.generate_iForest:
+		print_ok( "iForests outlier detection algorithm will be used to generate a global outlier list" )
+	else:
+		print_ok( "The global outlier list has been specified by the user" ) 

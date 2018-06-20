@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import oddball
 import pandas as pd
 import sys
 from collections import defaultdict
@@ -39,30 +38,8 @@ def scatter_plot(X, Y, IDs, yname, xname, title, val):
 	plt.gcf().subplots_adjust(bottom=0.18, left=0.18)
 	plt.loglog(X, Y, 'k.')
 
-	if algo_oddball:
-		# Interpolate the median line
-		minX = parametric_min(X, val); maxX = parametric_max(X, val)
-		binedges = np.logspace(log10(minX), log10(maxX), 10)
-		median_points_X = []; median_points_Y = []
-		median_points_X.append(minX)
-		median_points_Y.append(get_median([Y[j] for j in [ind for ind, x in enumerate(X) if x == minX]]))
-		for i in xrange(1, 10):
-			median_points_X.append(int(geometric_mean(binedges[i], binedges[i-1])))
-			median_points_Y.append(get_median([Y[j] for j in [ind for ind, x in enumerate(np.digitize(X, binedges)) if x == i]]))
-			if isnan(float(median_points_Y[-1])):
-				median_points_Y.pop(); median_points_X.pop()
-		median_points_X.append(maxX)
-		median_points_Y.append(get_median([Y[j] for j in [ind for ind, x in enumerate(X) if x == maxX]]))
-		plt.plot(median_points_X, median_points_Y, 'ro-')
-
-		# Calculate Oddball Scores
-		scores = oddball.get_scores(median_points_X, median_points_Y, X, Y, IDs)
-
-	elif algo_iForests:
-		features = combine_features([X, Y])
-		scores = iForest(IDs, features)
-	else:
-		print_fail("Scoring Algorithm not Chosen")
+	features = combine_features([X, Y])
+	scores = iForest(IDs, features)
 
 	# Write rank and scores to outputfile	
 	return fig, scores
