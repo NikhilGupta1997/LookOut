@@ -5,3 +5,4 @@ timestamp_field = 'TIMESTAMP' # Used only if time_series_data is set to true
 aggregate_fields = ["WEIGHT"]
 object_fields = ["DESTINATION"]
 
+outlier_list = [126, 128]

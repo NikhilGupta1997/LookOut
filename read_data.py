@@ -3,8 +3,9 @@ from __future__ import print_function
 import pandas as pd
 import sys
 from data import Feature
-from helper import *
 from feature_file import *
+from helper import *
+
 
 def read_data(args):
 	print( "\nFilename = ", end='' ); cprint(args.datafile, OKGREEN)
@@ -58,55 +59,86 @@ def read_data(args):
 
 	# Get ids mapping to identities
 	print( "\t-> Getting Object Ids" )
+	print( "\t\t-> ", end='' );
 	objects = data.groupby(identity_field)
 	ids = objects.groups.keys()
 	stats = objects.size().reset_index(name='counts')
 	COUNT = stats['counts'].values.tolist()
-	features['COUNT'] = Feature('COUNT', COUNT, ids)
-	print( "\t\t-> ", end='' ); cprint("COUNT", OKBLUE)
+	if data_not_flat(COUNT):
+		features['COUNT'] = Feature('COUNT', COUNT, ids)
+		cprint("COUNT", OKBLUE)
+	else:
+		cprint('COUNT', FAIL)
 
 	if time_series_data: # Add all time series metric features
 		print( "\t-> Creating Temporal Features" )
 		print( "\t\t-> ", end='' )
 		LIFETIME = objects['LIFETIME'].first().values.tolist()
-		features['LIFETIME'] = Feature('LIFETIME', LIFETIME, ids)
-		cprint('LIFETIME', OKBLUE, end='  ')
+		if data_not_flat(LIFETIME):
+			features['LIFETIME'] = Feature('LIFETIME', LIFETIME, ids)
+			cprint('LIFETIME', OKBLUE, end='  ')
+		else:
+			cprint('LIFETIME', FAIL, end='  ')
 		IAT_VAR_MEAN = objects['IAT_VAR_MEAN'].first().values.tolist()
-		features['IAT_VAR_MEAN'] = Feature('IAT_VAR_MEAN', IAT_VAR_MEAN, ids)
-		cprint('IAT_VAR_MEAN', OKBLUE, end='  ')
+		if data_not_flat(IAT_VAR_MEAN):
+			features['IAT_VAR_MEAN'] = Feature('IAT_VAR_MEAN', IAT_VAR_MEAN, ids)
+			cprint('IAT_VAR_MEAN', OKBLUE, end='  ')
+		else:
+			cprint('IAT_VAR_MEAN', FAIL, end='  ')
 		MEAN_IAT = objects['MEAN_IAT'].first().values.tolist()
-		features['MEAN_IAT'] = Feature('MEAN_IAT', MEAN_IAT, ids)
-		cprint('MEAN_IAT', OKBLUE, end='  ')
+		if data_not_flat(MEAN_IAT):
+			features['MEAN_IAT'] = Feature('MEAN_IAT', MEAN_IAT, ids)
+			cprint('MEAN_IAT', OKBLUE, end='  ')
+		else:
+			cprint('MEAN_IAT', FAIL, end='  ')
 		MEDIAN_IAT = objects['MEDIAN_IAT'].first().values.tolist()
-		features['MEDIAN_IAT'] = Feature('MEDIAN_IAT', MEDIAN_IAT, ids)
-		cprint('MEDIAN_IAT', OKBLUE, end='  ')
+		if data_not_flat(MEDIAN_IAT):
+			features['MEDIAN_IAT'] = Feature('MEDIAN_IAT', MEDIAN_IAT, ids)
+			cprint('MEDIAN_IAT', OKBLUE, end='  ')
+		else:
+			cprint('MEDIAN_IAT', FAIL, end='  ')
 
 	# Create Feature Object for individual data fields
 	print( "\n\t-> Creating Aggregate Features" )
 	for field in aggregate_fields:
 		print( "\t\t-> ", end='' )
 		values = objects[field].sum().values.tolist()
-		features[field] = Feature(field, values, ids)
-		cprint(field, OKBLUE, end='  ')
-		if time_series_data: # Calculate extra metrics
-			values = objects[field].mean().values.tolist()
-			name = field + '_MEAN'
-			features[name] = Feature(name, values, ids)
-			cprint(name, OKBLUE, end='  ')
-			values = objects[field].var().values.tolist()
-			name = field + '_VAR'
-			features[name] = Feature(name, values, ids)
-			cprint(name, OKBLUE, end='  ')
+		if data_not_flat(values):
+			features[field] = Feature(field, values, ids)
+			cprint(field, OKBLUE, end='  ')
+			if time_series_data: # Calculate extra metrics
+				values = objects[field].mean().values.tolist()
+				name = field + '_MEAN'
+				if data_not_flat(values):
+					features[name] = Feature(name, values, ids)
+					cprint(name, OKBLUE, end='  ')
+				else:
+					cprint(name, FAIL, end='  ')
+				values = objects[field].var().values.tolist()
+				name = field + '_VAR'
+				if data_not_flat(values):
+					features[name] = Feature(name, values, ids)
+					cprint(name, OKBLUE, end='  ')
+				else:
+					cprint(name, FAIL, end='  ')
+		else:
+			cprint(field, FAIL, end='  ')
 
 	# Create Feature Object for individual object fields
 	print( "\n\t-> Creating Object Features" )
 	print( "\t\t-> ", end='' )
 	for field in object_fields:
 		values = objects[field].nunique().values.tolist()
-		features[field] = Feature(field, values, ids)
-		cprint(field, OKBLUE, end='  ')
+		if data_not_flat(values):
+			features[field] = Feature(field, values, ids)
+			cprint(field, OKBLUE, end='  ')
+		else:
+			cprint(field, FAIL, end='  ')
 	print()
 	
-	print_ok("Feature Creation Complete")
-
-	return features
+	if len(features) != 0:
+		print_ok("Feature Creation Complete")
+		return features
+	else:
+		print_fail("No Features were Created. Exiting...")
+		sys.exit()

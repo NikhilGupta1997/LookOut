@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from display import *
+from feature_file import outlier_list
 from helper import scaling_function, combine_features
 from iForest import *
 
@@ -35,6 +36,8 @@ def calculate_outliers(args, features, rank_matrix):
 		scores = iForest(ids, data)
 		outliers = forest_outliers(args.num_outliers, scores)
 	else:
-		outliers = global_outlier_list
+		print( "\t-> Using Dictated Outliers" )
+		outliers = outlier_list
+		args.num_outliers = len(outlier_list)
 	print_ok("Outliers Calculated")
 	return outliers

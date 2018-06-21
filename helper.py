@@ -30,6 +30,21 @@ def get_std_dev( data ):
 def fix_zero_error(X):
 	return [ 1 if x == 0 else x for x in X]
 
+def data_not_flat(X):
+	X_min = get_min(X)
+	X_max = get_max(X)
+	X_mean = get_mean(X)
+	if X_mean == 0:
+		X_div = get_std_dev(X)
+	else:
+		X_div = X_mean
+	if X_div == 0:
+		return False
+	if ( float(X_max - X_min) / X_div ) <= 0.05:
+		return False
+	else:
+		return True
+
 # Returns quantile values for a list - 10% intervals
 def quantile(x):
 	vals = x.values
