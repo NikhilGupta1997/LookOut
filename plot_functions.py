@@ -29,6 +29,7 @@ def generate_scatter_plots(args, features):
 		plt.close(fig)
 		update_progress(i+1, len(feature_pairs))
 	pp.close()
+
 	print_ok('Scatter Plots Generated')
 	return rank_matrix, plot_dict
 

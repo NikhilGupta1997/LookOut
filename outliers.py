@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from display import print_ok, update_progress
+from display import *
 from helper import scaling_function, combine_features
 from iForest import *
 
@@ -23,6 +23,7 @@ def combine_lists(rank_list):
 	return [x[0] for x in sorted(score_list, key=lambda t: t[1])]
 
 def calculate_outliers(args, features, rank_matrix):
+	cprint("Calculating Outliers")
 	print( "\t-> Scaling Outlier Scores" )
 	if args.merge_ranklists:		
 		print( "\t-> Merging Rank Lists" )

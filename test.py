@@ -1,9 +1,9 @@
 import argparse
 from data import Feature
-from data_transform import read_data
 from helper import init_environment
 from outliers import calculate_outliers
 from plot_functions import generate_scatter_plots
+from read_data import read_data
 from run_algos import run
 
 """ Parse Arguments to extract data script """
@@ -45,7 +45,7 @@ args = parser.parse_args()
 init_environment(args)
 
 """ Create features from Data """
-features = read_data(args) # from data_transform.py
+features = read_data(args)
 
 """ Generate Scatter Plots and Outlier Scores """
 rank_matrix, plot_dict = generate_scatter_plots(args, features)

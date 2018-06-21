@@ -141,6 +141,7 @@ def realign(Vals, IDs, DEST_IDs):
 	return output
 
 def init_environment(args):
+	cprint("Initializing Environment")
 	file = args.datafolder + args.datafile
 	if os.path.isfile( file ):
 		print_ok( "Datafile \"" + file + "\" successfully found" )
