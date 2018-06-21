@@ -1,4 +1,5 @@
 from helper import *
+import warnings
 
 class Feature:
 	def __init__( self, name, data, ids ):
@@ -30,6 +31,8 @@ class Feature:
 
 	def set_log( self, val ):
 		self.log = val
+		if val:
+			self.data = fix_zero_error(self.data)
 
 	def get_data( self ):
 		return self.data
@@ -56,8 +59,15 @@ class Feature:
 		self.analytics['std_dev'] = get_std_dev( self.data )
 
 	def predict_scale( self ):
+		warnings.filterwarnings('error')
+		if self.analytics['min'] < 0:
+			return
 		upper_diff = self.analytics['max'] - self.analytics['median']
 		lower_diff = self.analytics['median'] - self.analytics['min']
-		ratio = float( upper_diff / lower_diff )
+		try:
+			ratio = float( upper_diff / lower_diff )
+		except RuntimeWarning as e:
+			self.set_log( True )
+			return
 		if  ratio > 10.0 or ratio < 0.1:
 			self.set_log( True )

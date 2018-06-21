@@ -10,25 +10,24 @@ def read_data(args):
 	# Read data from csv file
 	cprint("Reading File")
 	data = pd.read_csv(args.datafolder + args.datafile, delimiter=args.data_delimiter) # Be patient, takes some time
-	disable_warnings()
 	print_ok("File Read Complete")
 
 	""" TRANSFORMATIONS """
 	cprint("Transformations")
 
 	# Remove unwanted rows
-	print "	-> Removing Unwanted Rows"
+	print( "\t-> Removing Unwanted Rows" )
 	data = data[data.groupby('SOURCE').SOURCE.transform(len)>=10] # Remove the entries with less than 10 transactions
 
 	# Add User Lifetime Detail Columns
-	print "	-> Calculating Lifetimes"
+	print( "\t-> Calculating Lifetimes" )
 	data.insert(0,'FIRST_TRANSMISSION_DATE', data.groupby('SOURCE')['TIMESTAMP'].transform(lambda x: min(x)))
 	data.insert(1,'LAST_TRANSMISSION_DATE', data.groupby('SOURCE')['TIMESTAMP'].transform(lambda x: max(x)))
 	data['LIFETIME'] = (data['LAST_TRANSMISSION_DATE'] - data['FIRST_TRANSMISSION_DATE']) # Add column for user lifetime
 	data = data[data.LIFETIME > 0]
 
 	# Add IAT information
-	print "	-> Adding IAT Information"
+	print( "\t-> Adding IAT Information" )
 	data = data.sort_values(['SOURCE','TIMESTAMP'])
 	data['NEXT_TIMESTAMP'] = data.groupby('SOURCE')['TIMESTAMP'].shift(-1)
 	data['IAT'] = data['NEXT_TIMESTAMP'] - data['TIMESTAMP']
@@ -37,7 +36,7 @@ def read_data(args):
 	# data.insert(1,'IAT_VAR', data.groupby('SOURCE')['IAT'].transform(lambda x: variance(x)))
 
 	# Add Quantile information based on Amount Spent by the User
-	print "	-> Adding IAT Quantile Information"
+	print( "\t-> Adding IAT Quantile Information" )
 	users = data.groupby('SOURCE')
 	update_progress(0, 11)
 	quant_list = []
