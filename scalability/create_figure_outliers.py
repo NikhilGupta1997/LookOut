@@ -82,4 +82,4 @@ num_outliers = range(10, 91, 10)
 outlier_values = pickle.load(open('results/scalability_outliers.pkl', 'rb'))
 
 # plot(edges_values, 'number of edges', num_edges, log=True)
-plot(outlier_values, 'number of anomalies', num_outliers)
+plot(outlier_values, 'number of outliers', num_outliers)

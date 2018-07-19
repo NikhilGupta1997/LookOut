@@ -39,9 +39,6 @@ def combine_lists(rank_list):
 			score +=  1 / float(60 + pos)
 		score_list.append((user, score))
 	return [x[0] for x in sorted(score_list, key=lambda t: t[1])]
-			
-def write_to_output(list, plot):
-	return [[int(val.item(0)), plot, val.item(1)] for val in list]
 
 def quantile_cut(scores, max_score):
 	score_list = [score.tolist()[0][0] for score in scores]
@@ -100,3 +97,6 @@ def generate_graph(P_val, N_val, rank_matrix):
 		new_list = round_off(np.delete(list, delete_rows, axis = 0))
 		normal_matrix.append(write_to_output(new_list, plot_ids[index]))
 	return scaled_matrix, normal_matrix
+
+def write_to_output(list, plot):
+	return [[int(val.item(0)), plot, val.item(1)] for val in list]
