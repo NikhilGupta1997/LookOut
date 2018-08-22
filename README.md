@@ -1,4 +1,4 @@
-# Anomaly Detection
+# LookOut
 
 ## Contents
 - [File Structure](#file-structure)
